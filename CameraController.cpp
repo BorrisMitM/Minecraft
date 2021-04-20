@@ -1,7 +1,7 @@
 #include "CameraController.h"
 #include <iostream>
 
-void CameraController::HandleInput()
+void CameraController::HandleInput(float dt)
 {
 	//check input
 	//set speed
@@ -33,24 +33,24 @@ void CameraController::HandleInput()
 	//}
 
 	SHORT key = ::GetAsyncKeyState(0x57) & 0x8000;//W
-	if (key != 0) position += forward * velocityMagnitude;
+	if (key != 0) position += forward * velocityMagnitude * dt;
 
 	key = ::GetAsyncKeyState(0x53) & 0x8000;//S
-	if (key != 0) position -= forward * velocityMagnitude;
+	if (key != 0) position -= forward * velocityMagnitude * dt;
 	
 	key = ::GetAsyncKeyState(0x44) & 0x8000;//D
-	if (key != 0) position += side * velocityMagnitude;
+	if (key != 0) position += side * velocityMagnitude * dt;
 
 	key = ::GetAsyncKeyState(0x41) & 0x8000;//A
-	if (key != 0) position -= side * velocityMagnitude;
+	if (key != 0) position -= side * velocityMagnitude * dt;
 		
 	key = ::GetAsyncKeyState(0x45) & 0x8000;//E
 	if (key != 0) 
-		position += up * velocityMagnitude;
+		position += up * velocityMagnitude * dt;
 
 	key = ::GetAsyncKeyState(0x51) & 0x8000;//Q
 	if (key != 0) 
-		position -= up * velocityMagnitude;
+		position -= up * velocityMagnitude * dt;
 	
 
 	//rotate controls OLD
@@ -70,16 +70,16 @@ void CameraController::HandleInput()
 	//}
 
 	key = ::GetAsyncKeyState(VK_UP) & 0x8000;//up arrow
-	if (key != 0) pitch += turnSpeed;
+	if (key != 0) pitch += turnSpeed * dt;
 
 	key = ::GetAsyncKeyState(VK_DOWN) & 0x8000;//down arrow
-	if (key != 0) pitch -= turnSpeed;
+	if (key != 0) pitch -= turnSpeed * dt;
 	
 	key = ::GetAsyncKeyState(VK_LEFT) & 0x8000;//left arrow
-	if (key != 0) yaw -= turnSpeed;
+	if (key != 0) yaw -= turnSpeed * dt;
 	
 	key = ::GetAsyncKeyState(VK_RIGHT) & 0x8000;//right arrow
-	if (key != 0) yaw += turnSpeed;
+	if (key != 0) yaw += turnSpeed * dt;
 
 
 	if (yaw < 0) yaw += 360.f;
@@ -94,7 +94,7 @@ void CameraController::HandleInput()
 	
 }
 
-void CameraController::Update()
+void CameraController::Update(float dt)
 {
 	float cosPitch = cosf(pitch * 3.1415 / 180);
 	float cosYaw = cosf(yaw * 3.1415 / 180);

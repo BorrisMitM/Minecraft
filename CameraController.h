@@ -19,8 +19,8 @@ public:
 	const Vector3& getLookAt() { return position + forward; }
 	const Vector3& getUp() { return up; }
 
-	void HandleInput();
-	void Update();
-	CameraController() { position.x = 0.f, position.y = 0.f, position.z = 0.f; pitch = 0.f; yaw = 180.f; roll = 0.f; velocityMagnitude = 1.f; turnSpeed = 10.f; Update(); }
+	void HandleInput(float dt);
+	void Update(float dt);
+	CameraController() { position.x = 0.f, position.y = 0.f, position.z = 0.f; pitch = 0.f; yaw = 180.f; roll = 0.f; velocityMagnitude = 50.f; turnSpeed = 50.f; }
 };
 
