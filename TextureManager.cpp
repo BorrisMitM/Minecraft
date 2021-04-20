@@ -46,7 +46,7 @@ void TextureManager::LoadTextures()
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, pStoneBitmap->m_nWidth, pStoneBitmap->m_nHeight, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, pStoneBitmap->m_pBytes);
 
-	delete(pDirtBitmap);
+	delete(pStoneBitmap);
 
 	CBitmap* pCloudBitmap = new CBitmap();
 	//cloud
