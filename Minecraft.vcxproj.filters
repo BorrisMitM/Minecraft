@@ -45,6 +45,9 @@
     <ClCompile Include="CameraController.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="PerlinWorm.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLWindow.h">
@@ -75,6 +78,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="CameraController.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="PerlinWorm.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

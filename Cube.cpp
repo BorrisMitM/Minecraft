@@ -11,7 +11,7 @@ void Cube::SetVisibilty(int direction, bool isVisible)
 
 void Cube::Render()
 {
-	if (!visible) return;
+	//if (!visible) return;
 	glPushMatrix();
 	glTranslatef(position.x, position.y, position.z);
 	glBegin(GL_QUADS);

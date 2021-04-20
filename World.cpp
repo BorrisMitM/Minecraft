@@ -44,6 +44,7 @@ World::World()
 {
 	textureManager.LoadTextures();
 	TerrainGenerator terrainGenerator;
+	terrainGenerator.GenerateWorms();
 	for (int x = -CHUNK_DISTANCE; x <= CHUNK_DISTANCE; x++) {
 		for (int z = -CHUNK_DISTANCE; z <= CHUNK_DISTANCE; z++) {
 			Chunk* newChunk = terrainGenerator.GenerateChunk(x, z);

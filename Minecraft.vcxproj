@@ -164,6 +164,7 @@
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="GLWindow.cpp" />
     <ClCompile Include="Minecraft.cpp" />
+    <ClCompile Include="PerlinWorm.cpp" />
     <ClCompile Include="TerrainGenerator.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="Vector3.cpp" />
@@ -176,6 +177,7 @@
     <ClInclude Include="Cube.h" />
     <ClInclude Include="FastNoiseLite.h" />
     <ClInclude Include="GLWindow.h" />
+    <ClInclude Include="PerlinWorm.h" />
     <ClInclude Include="TerrainGenerator.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Vector3.h" />

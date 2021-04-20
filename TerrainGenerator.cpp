@@ -71,7 +71,10 @@ Chunk* TerrainGenerator::GenerateChunk(int gridPosX, int gridPosZ)
 	newChunk->gridPosZ = gridPosZ;
 	//create noise object
 	FastNoiseLite noise;
-	noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+	noise.SetSeed(222);
+	noise.SetFractalOctaves(2);
+	//noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+	noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
 
 	for (int x = 0; x < 16; x++)
 	{
@@ -83,11 +86,29 @@ Chunk* TerrainGenerator::GenerateChunk(int gridPosX, int gridPosZ)
 			newChunk->heightMap[x][z] = height;
 			//fill position with dirt cubes till height is reached
 			for (int i = 0; i <= height; i++) {
-				Cube* cube = new Cube(gridPosX * 16 + x, i, gridPosZ * 16 + z);
-				newChunk->cubes[x][i][z] = cube;
+				int worldX = x + gridPosX * 16;
+				int worldZ = z + gridPosZ * 16;
+				if (i < MIN_HEIGHT) {
+					if (!worm->IsCaveAt(Vector3(worldX, i, worldZ))) {
+						Cube* cube = new Cube(gridPosX * 16 + x, i, gridPosZ * 16 + z);
+						newChunk->cubes[x][i][z] = cube;
+					}
+					else {
+						newChunk->cubes[x][i][z] = NULL;
+					}
+				}
+				else {
+					Cube* cube = new Cube(gridPosX * 16 + x, i, gridPosZ * 16 + z);
+					newChunk->cubes[x][i][z] = cube;
+				}
 			}
 		}
 	}
-
+	//generate caves
 	return newChunk;
+}
+
+void TerrainGenerator::GenerateWorms()
+{
+	worm = new PerlinWorm();
 }

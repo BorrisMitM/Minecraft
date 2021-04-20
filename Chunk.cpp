@@ -11,18 +11,12 @@ void Chunk::SetVisibility()
 			{
   				if (cubes[x][y][z] == NULL) continue; 
 				//this can be used later for destroying blocks and activating neighboring blocks
-				//if (x <= 0)	 continue;
-				//if (y <= 0)	 continue;
-				//if (z <= 0)	 continue;
-				//if (x >= 15)	 continue;
-				//if (y >= 255) continue;
-				//if (z >= 15)	 continue;
 				if(x > 0)
 					cubes[x][y][z]->SetVisibilty(3, cubes[x - 1][y][z] == NULL);
 				else cubes[x][y][z]->SetVisibilty(3, true);
 				if(y > 0)
 					cubes[x][y][z]->SetVisibilty(5, cubes[x][y - 1][z] == NULL);
-				else cubes[x][y][z]->SetVisibilty(5, true);
+				else cubes[x][y][z]->SetVisibilty(5, false);
 				if(z > 0)
 					cubes[x][y][z]->SetVisibilty(2, cubes[x][y][z - 1] == NULL);
 				else cubes[x][y][z]->SetVisibilty(2, true);
@@ -48,7 +42,8 @@ void Chunk::Render(TextureManager& textureManager)
 	{
 		for (int z = 0; z < 16; z++)
 		{
-			cubes[x][heightMap[x][z]][z]->Render();
+			if(cubes[x][heightMap[x][z]][z] != NULL)
+				cubes[x][heightMap[x][z]][z]->Render();
 		}
 	}
 

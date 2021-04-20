@@ -17,6 +17,15 @@ Vector3 Vector3::operator + (Vector3 const& v)
 	return temp;
 }
 
+Vector3 Vector3::operator - (Vector3 const& v)
+{
+	Vector3 temp;
+	temp.x = x - v.x;
+	temp.y = y - v.y;
+	temp.z = z - v.z;
+	return temp;
+}
+
 Vector3& Vector3::operator+=(Vector3 const& v)
 {
 	this->x += v.x;
