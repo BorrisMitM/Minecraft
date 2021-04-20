@@ -8,6 +8,9 @@
 #include "CameraController.h"
 // --------------------------------------------------------------------------------
 
+float timeSinceStart= 0, oldTimeSinceStart = 0;
+float deltaTime;
+
 int main(void)
 {
 	//Markus stuff
@@ -42,8 +45,13 @@ int main(void)
 	glViewport(0, 0, window.m_nWidth, window.m_nHeight);	
 	while (window.IsRunning()) {
 
-		world.HandleInput();
-		world.Update();
+		timeSinceStart = glfwGetTime();
+		deltaTime = timeSinceStart - oldTimeSinceStart;
+		deltaTime = deltaTime;
+		oldTimeSinceStart = timeSinceStart;
+
+		world.HandleInput(deltaTime);
+		world.Update(deltaTime);
 		world.RenderWorld();
 
 

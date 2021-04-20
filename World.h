@@ -21,8 +21,8 @@ public:
 	vector<Cube*> cloudCubes;
 	vector<Cube*> waterCubes;
 
-	void HandleInput();
-	void Update(); // nothing yet
+	void HandleInput(float dt);
+	void Update(float dt); // nothing yet
 	void RenderWorld();
 	World();
 };

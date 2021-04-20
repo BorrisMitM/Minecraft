@@ -1,14 +1,14 @@
 #include "World.h"
 #include "TerrainGenerator.h"
 
-void World::HandleInput()
+void World::HandleInput(float dt)
 {
-	camera.HandleInput();
+	camera.HandleInput(dt);
 }
 
-void World::Update()
+void World::Update(float dt)
 {
-	camera.Update();
+	camera.Update(dt);
 }
 
 void World::RenderWorld()
