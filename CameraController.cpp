@@ -1,24 +1,10 @@
 #include "CameraController.h"
 #include <iostream>
 
-Vector3 CameraController::center;
-Vector3 CameraController::mousePos;
-Vector3 CameraController::lastMousePos;
-
-void CameraController::CursorPositionCallback(GLFWwindow* window, double xpos, double ypos)
-{
-	CameraController::mousePos.x = xpos - lastMousePos.x;
-	CameraController::mousePos.y = ypos - lastMousePos.y;
-	lastMousePos.x = xpos;
-	lastMousePos.y = ypos;
-	mousePos.Print();
-}
 
 void CameraController::Setup(GLWindow* window)
 {
 	this->window = window;
-	center.x = window->m_nWidth/2;
-	center.y = window->m_nHeight/2;
 	//glfwSetCursorPosCallback(window->m_Window, CursorPositionCallback);
 	glfwSetInputMode(window->m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
@@ -47,19 +33,6 @@ void CameraController::HandleInput(float dt)
 		position -= up * velocityMagnitude * dt;
 	
 
-	//key = ::GetAsyncKeyState(VK_UP) & 0x8000;//up arrow
-	//if (key != 0) pitch += turnSpeed * dt;
-	//
-	//key = ::GetAsyncKeyState(VK_DOWN) & 0x8000;//down arrow
-	//if (key != 0) pitch -= turnSpeed * dt;
-	//
-	//key = ::GetAsyncKeyState(VK_LEFT) & 0x8000;//left arrow
-	//if (key != 0) yaw -= turnSpeed * dt;
-	//
-	//key = ::GetAsyncKeyState(VK_RIGHT) & 0x8000;//right arrow
-	//if (key != 0) yaw += turnSpeed * dt;
-	//
-	//
 	double xpos, ypos;
 	glfwGetCursorPos(window->m_Window, &xpos, &ypos);
 
@@ -102,28 +75,6 @@ void CameraController::Update(float dt)
 	up.z = -sinYaw * sinRoll - sinPitch * cosRoll * -cosYaw;
 
 	side = forward.cross(up);
-
-	//cout << "position: " << position.x << " " << position.y << " " << position.z << endl;
-	//cout << "Up: " << up.x << " " << up.y << " " << up.z << endl;
-	//cout << "lookAt: " << position.x + forward.x << " " << position.y + forward.y << " " << position.z + forward.z << endl;
-	//cout << "angles: " << yaw << " " << pitch << " " << roll << endl;
-
-
-	//CAMERA MOVEMENT OLD
-	/*Vector3 up;
-	Vector3 forward;
-
-	forward.z = cos(pitch) * cos(yaw);
-	forward.y = sin(pitch);
-	forward.x = sin(yaw) * cos(pitch);
-	forward.Normalize();
-	up.x = -sin(yaw) * sin(pitch);
-	up.y = cos(pitch);
-	up.z = sin(pitch) * cos(yaw);
-	up.Normalize();
-	forward.Print();
-
-	gluLookAt(velocity.x, velocity.y, velocity.z, -forward.x, -forward.y, -forward.z, up.x, up.y, up.z);*/
 }
 
 CameraController::CameraController()
