@@ -4,6 +4,7 @@
 #include "TextureManager.h"
 #include "Chunk.h"
 #include "CameraController.h" 
+#include "GLWindow.h"
 //for older generation
 #define XSIZE 20
 #define ZSIZE 20
@@ -14,9 +15,9 @@ class World
 private:
 	TextureManager textureManager; 
 	vector<Chunk*> chunks;
-	CameraController camera;
 
 public: 
+	CameraController camera;
 	vector<Cube*> dirtCubes;
 	vector<Cube*> cloudCubes;
 	vector<Cube*> waterCubes;

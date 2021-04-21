@@ -11,6 +11,9 @@
 float timeSinceStart= 0, oldTimeSinceStart = 0;
 float deltaTime;
 
+
+
+
 int main(void)
 {
 	//Markus stuff
@@ -30,17 +33,13 @@ int main(void)
 	glMatrixMode(GL_MODELVIEW);
 	
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	//Move Camera
-	//glTranslatef(0.0f, 0.0f, -200.0f);
-	//glRotatef(-45, 0, 1, 0);
-	//glRotatef(45, 1, 0, 0);
 
 	//Create World
 	World world;
-	//Generate terrain, comment this out if we use chunks
-	//TerrainGenerator terrainGenerator;
-	//terrainGenerator.Generate(world);
-	//Update and Render World
+
+	world.camera.Setup(&window);
+
+
 
 	glViewport(0, 0, window.m_nWidth, window.m_nHeight);	
 	while (window.IsRunning()) {
@@ -60,3 +59,4 @@ int main(void)
 		window.Present();
 	}
 }
+

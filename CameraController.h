@@ -12,15 +12,21 @@ class CameraController
 	float pitch, yaw, roll;
 	float velocityMagnitude, turnSpeed;
 
+	GLWindow* window;
 public:
-
+	static Vector3 center;
+	static Vector3 mousePos;
+	static Vector3 lastMousePos;
 	const Vector3& getPosition() { return position; }
 	void setPosition(const Vector3& pos) { position = pos; }
 	const Vector3& getLookAt() { return position + forward; }
 	const Vector3& getUp() { return up; }
 
+	void Setup(GLWindow* window);
 	void HandleInput(float dt);
 	void Update(float dt);
-	CameraController() { position.x = 0.f, position.y = 0.f, position.z = 0.f; pitch = 0.f; yaw = 180.f; roll = 0.f; velocityMagnitude = 50.f; turnSpeed = 50.f; }
+	static void CursorPositionCallback(GLFWwindow* window, double xpos, double ypos);
+	CameraController();
+
 };
 

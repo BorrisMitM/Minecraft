@@ -1,36 +1,30 @@
 #include "CameraController.h"
 #include <iostream>
 
-void CameraController::HandleInput(float dt)
-{
-	//check input
-	//set speed
-	//displace position
-	// This is a Windows function to check for multiple keystrokes at the same time.
-		// If the highest bit is set the requested key is pressed.
+Vector3 CameraController::center;
+Vector3 CameraController::mousePos;
+Vector3 CameraController::lastMousePos;
 
-	// translate controls OLD
-	//SHORT key = ::GetAsyncKeyState(0x57) & 0x8000;//W
-	//if (key != 0) velocity.z = -velocityMagnitude;
-	//else {
-	//	key = ::GetAsyncKeyState(0x53) & 0x8000;//S
-	//	if (key != 0) velocity.z = velocityMagnitude;
-	//	else velocity.z = 0;
-	//}
-	//key = ::GetAsyncKeyState(0x44) & 0x8000;//D
-	//if (key != 0) velocity.x = velocityMagnitude;
-	//else {
-	//	key = ::GetAsyncKeyState(0x41) & 0x8000;//A
-	//	if (key != 0) velocity.x = -velocityMagnitude;
-	//	else velocity.x = 0;
-	//}
-	//key = ::GetAsyncKeyState(0x45) & 0x8000;//E
-	//if (key != 0) velocity.y = -velocityMagnitude;
-	//else {
-	//	key = ::GetAsyncKeyState(0x51) & 0x8000;//Q
-	//	if (key != 0) velocity.y = velocityMagnitude;
-	//	else velocity.y = 0;
-	//}
+void CameraController::CursorPositionCallback(GLFWwindow* window, double xpos, double ypos)
+{
+	CameraController::mousePos.x = xpos - lastMousePos.x;
+	CameraController::mousePos.y = ypos - lastMousePos.y;
+	lastMousePos.x = xpos;
+	lastMousePos.y = ypos;
+	mousePos.Print();
+}
+
+void CameraController::Setup(GLWindow* window)
+{
+	this->window = window;
+	center.x = window->m_nWidth/2;
+	center.y = window->m_nHeight/2;
+	//glfwSetCursorPosCallback(window->m_Window, CursorPositionCallback);
+	glfwSetInputMode(window->m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
+
+void CameraController::HandleInput(float dt)
+{ 
 
 	SHORT key = ::GetAsyncKeyState(0x57) & 0x8000;//W
 	if (key != 0) position += forward * velocityMagnitude * dt;
@@ -53,41 +47,36 @@ void CameraController::HandleInput(float dt)
 		position -= up * velocityMagnitude * dt;
 	
 
-	//rotate controls OLD
-	//key = ::GetAsyncKeyState(VK_UP) & 0x8000;//uparrow
-	//if (key != 0) pitch = turnSpeed;
-	//else {
-	//	key = ::GetAsyncKeyState(VK_DOWN) & 0x8000;//downarro
-	//	if (key != 0) pitch = -turnSpeed;
-	//	else pitch = 0;
-	//}
-	//key = ::GetAsyncKeyState(VK_LEFT) & 0x8000;//uparrow
-	//if (key != 0) yaw = turnSpeed;
-	//else {
-	//	key = ::GetAsyncKeyState(VK_RIGHT) & 0x8000;//downarro
-	//	if (key != 0) yaw = -turnSpeed;
-	//	else yaw = 0;
-	//}
+	//key = ::GetAsyncKeyState(VK_UP) & 0x8000;//up arrow
+	//if (key != 0) pitch += turnSpeed * dt;
+	//
+	//key = ::GetAsyncKeyState(VK_DOWN) & 0x8000;//down arrow
+	//if (key != 0) pitch -= turnSpeed * dt;
+	//
+	//key = ::GetAsyncKeyState(VK_LEFT) & 0x8000;//left arrow
+	//if (key != 0) yaw -= turnSpeed * dt;
+	//
+	//key = ::GetAsyncKeyState(VK_RIGHT) & 0x8000;//right arrow
+	//if (key != 0) yaw += turnSpeed * dt;
+	//
+	//
+	double xpos, ypos;
+	glfwGetCursorPos(window->m_Window, &xpos, &ypos);
 
-	key = ::GetAsyncKeyState(VK_UP) & 0x8000;//up arrow
-	if (key != 0) pitch += turnSpeed * dt;
+	mousePos.x = xpos - lastMousePos.x;
+	mousePos.y = ypos - lastMousePos.y;
+	lastMousePos.x = xpos;
+	lastMousePos.y = ypos;
 
-	key = ::GetAsyncKeyState(VK_DOWN) & 0x8000;//down arrow
-	if (key != 0) pitch -= turnSpeed * dt;
-	
-	key = ::GetAsyncKeyState(VK_LEFT) & 0x8000;//left arrow
-	if (key != 0) yaw -= turnSpeed * dt;
-	
-	key = ::GetAsyncKeyState(VK_RIGHT) & 0x8000;//right arrow
-	if (key != 0) yaw += turnSpeed * dt;
-
+	pitch -= turnSpeed * dt * mousePos.y;
+	yaw += turnSpeed * dt * mousePos.x;
 
 	if (yaw < 0) yaw += 360.f;
 	if (yaw > 360) yaw -= 360.f;
-
-	if (pitch < 0) pitch += 360.f;
-	if (pitch > 360) pitch -= 360.f;
-
+	
+	if (pitch < -85) pitch = -85;
+	if (pitch > 85) pitch = 85;
+	
 	if (roll < 0) roll += 360.f;
 	if (roll > 360) roll -= 360.f;
 	
@@ -135,4 +124,16 @@ void CameraController::Update(float dt)
 	forward.Print();
 
 	gluLookAt(velocity.x, velocity.y, velocity.z, -forward.x, -forward.y, -forward.z, up.x, up.y, up.z);*/
+}
+
+CameraController::CameraController()
+{
+	position.x = 0.f,
+	position.y = 0.f,
+	position.z = 0.f;
+	pitch = 0.f;
+	yaw = 180.f;
+	roll = 0.f;
+	velocityMagnitude = 50.f;
+	turnSpeed = .5f;
 }
