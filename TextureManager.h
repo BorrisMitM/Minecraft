@@ -14,6 +14,7 @@ public:
 	GLuint		  dirtTexture;
 	GLuint		  stoneTexture;
 	GLuint		  cloudTexture;
+	GLuint		  skyboxTexture;
 	GLuint		  waterTexture;
 	void LoadTextures();
 	void BindTexture(GLuint textureID);

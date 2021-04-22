@@ -5,6 +5,7 @@
 #include "Chunk.h"
 #include "CameraController.h" 
 #include "GLWindow.h"
+#include "Skybox.h"
 //for older generation
 #define XSIZE 20
 #define ZSIZE 20
@@ -15,7 +16,7 @@ class World
 private:
 	TextureManager textureManager; 
 	vector<Chunk*> chunks;
-
+	Skybox* skybox;
 public: 
 	CameraController camera;
 	vector<Cube*> dirtCubes;
@@ -27,5 +28,3 @@ public:
 	void RenderWorld();
 	World();
 };
-
-//somehow do chunks I guess

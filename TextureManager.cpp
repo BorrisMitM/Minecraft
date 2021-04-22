@@ -63,6 +63,21 @@ void TextureManager::LoadTextures()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, pCloudBitmap->m_nWidth, pCloudBitmap->m_nHeight, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, pCloudBitmap->m_pBytes);
 
 	delete(pCloudBitmap);
+	CBitmap* pSkyboxBitmap = new CBitmap();
+	//cloud
+	pSkyboxBitmap->LoadFromFile("skybox.jpg");
+
+	glGenTextures(1, &skyboxTexture);
+	glBindTexture(GL_TEXTURE_2D, skyboxTexture);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, pSkyboxBitmap->m_nWidth, pSkyboxBitmap->m_nHeight, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, pSkyboxBitmap->m_pBytes);
+
+	delete(pSkyboxBitmap);
 }
 
 void TextureManager::BindTexture(GLuint texture)

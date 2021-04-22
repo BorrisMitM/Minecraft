@@ -33,7 +33,7 @@ int main(void)
 	glMatrixMode(GL_MODELVIEW);
 	
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
+	glCullFace(GL_FRONT);
 	//Create World
 	World world;
 

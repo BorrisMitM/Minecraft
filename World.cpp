@@ -36,13 +36,16 @@ void World::RenderWorld()
 	for (int i = 0; i < chunks.size(); i++) {
 		chunks[i]->Render(textureManager);
 	}
-
+	skybox->Render(textureManager);
 	//water still to come
 }
 
 World::World()
 {
 	textureManager.LoadTextures();
+
+	skybox = new Skybox(1000.0f);
+
 	TerrainGenerator terrainGenerator;
 	terrainGenerator.GenerateWorms();
 	for (int x = -CHUNK_DISTANCE; x <= CHUNK_DISTANCE; x++) {
