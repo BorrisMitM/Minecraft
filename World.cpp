@@ -9,6 +9,7 @@ void World::HandleInput(float dt)
 void World::Update(float dt)
 {
 	camera.Update(dt);
+	skybox->SetPosition(camera.getPosition());
 }
 
 void World::RenderWorld()
@@ -24,6 +25,7 @@ void World::RenderWorld()
 		camera.getUp().x, camera.getUp().y, camera.getUp().z
 	);
 
+	skybox->Render(textureManager);
 
 	textureManager.BindTexture(textureManager.cloudTexture);
 	for (int i = 0; i < cloudCubes.size(); i++) {
@@ -36,7 +38,7 @@ void World::RenderWorld()
 	for (int i = 0; i < chunks.size(); i++) {
 		chunks[i]->Render(textureManager);
 	}
-	skybox->Render(textureManager);
+
 	//water still to come
 }
 
@@ -44,7 +46,7 @@ World::World()
 {
 	textureManager.LoadTextures();
 
-	skybox = new Skybox(1000.0f);
+	skybox = new Skybox(10.0f);
 
 	TerrainGenerator terrainGenerator;
 	terrainGenerator.GenerateWorms();

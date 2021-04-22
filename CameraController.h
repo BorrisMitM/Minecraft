@@ -13,7 +13,9 @@ class CameraController
 	float velocityMagnitude, turnSpeed;
 
 	GLWindow* window;
+
 public:
+
 	Vector3 mousePos;
 	Vector3 lastMousePos;
 	const Vector3& getPosition() { return position; }

@@ -75,6 +75,7 @@ void CameraController::Update(float dt)
 	up.z = -sinYaw * sinRoll - sinPitch * cosRoll * -cosYaw;
 
 	side = forward.cross(up);
+
 }
 
 CameraController::CameraController()

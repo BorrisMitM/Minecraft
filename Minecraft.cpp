@@ -11,9 +11,6 @@
 float timeSinceStart= 0, oldTimeSinceStart = 0;
 float deltaTime;
 
-
-
-
 int main(void)
 {
 	//Markus stuff
@@ -24,6 +21,7 @@ int main(void)
 	GLfloat aspect;
 
 	glClearDepth(1.0); // clear Z Buffer
+	glDepthFunc(GL_LEQUAL);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
@@ -38,8 +36,6 @@ int main(void)
 	World world;
 
 	world.camera.Setup(&window);
-
-
 
 	glViewport(0, 0, window.m_nWidth, window.m_nHeight);	
 	while (window.IsRunning()) {
