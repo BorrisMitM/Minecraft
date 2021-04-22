@@ -4,6 +4,7 @@
 #include <math.h>
 #include "Chunk.h"
 #include "PerlinWorm.h"
+#include "Easing.h"
 class TerrainGenerator
 {
 private:
