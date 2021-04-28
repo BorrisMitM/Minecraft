@@ -24,7 +24,7 @@ public:
 	vector<Cube*> waterCubes;
 
 	void HandleInput(float dt);
-	void Update(float dt); // nothing yet
+	void Update(float dt); 
 	void RenderWorld();
 	World();
 };
