@@ -1,5 +1,39 @@
 #include "Cube.h"
 
+
+const Cube::Vertex Cube::vertexTemplate[36] = {
+	{0.0,0.0,0.0 ,0.0,0.0,1.0 ,0.0,0.33}, // front	
+	{1.0,0.0,0.0 ,0.0,0.0,1.0 ,0.0,0.66},
+	{0.0,1.0,0.0 ,0.0,0.0,1.0 ,0.25,0.33},
+	{1.0,1.0,0.0 ,0.0,0.0,1.0 ,0.25,0.66},
+
+	{1.0,0.0,0.0 ,1.0,0.0,0.0 ,0.25,1.0}, // right
+	{1.0,0.0,-1.0 ,1.0,0.0,0.0 ,0.5,1.0},
+	{1.0,1.0,0.0 ,1.0,0.0,0.0 ,0.25,0.66},
+	{1.0,1.0,-1.0 ,1.0,0.0,0.0 ,0.5,0.66},
+
+	{1.0,0.0,-1.0 ,0.0,0.0,-1.0 ,0.75,0.33}, // back
+	{0.0,0.0,-1.0 ,0.0,0.0,-1.0 ,0.75,0.66},
+	{1.0,1.0,-1.0 ,0.0,0.0,-1.0 ,0.5,0.33},
+	{0.0,1.0,-1.0 ,0.0,0.0,-1.0 ,0.5,0.66},
+
+	{0.0,0.0,-1.0 ,-1.0,0.0,0.0 ,0.25,0.0}, // left
+	{0.0,0.0,0.0 ,-1.0,0.0,0.0 ,0.5,0.0},
+	{0.0,1.0,-1.0 ,-1.0,0.0,0.0 ,0.25,0.33},
+	{0.0,1.0,0.0 ,-1.0,0.0,0.0 ,0.5,0.33},
+
+	{0.0,1.0,0.0 ,0.0,1.0,0.0 ,0.25,0.66}, // top
+	{1.0,1.0,0.0 ,0.0,1.0,0.0 ,0.5,0.66},
+	{0.0,1.0,-1.0 ,0.0,1.0,0.0 ,0.25,0.33},
+	{1.0,1.0,-1.0 ,0.0,1.0,0.0 ,0.5,0.33},
+
+	{0.0,0.0,-1.0 ,0.0,-1.0,0.0 ,0.75,0.66}, // bottom
+	{1.0,0.0,-1.0 ,0.0,-1.0,0.0 ,0.75,0.33},
+	{0.0,0.0,0.0 ,0.0,-1.0,0.0 ,1.0,0.66},
+	{1.0,0.0,0.0 ,0.0,-1.0,0.0 ,1.0,0.33}
+};
+
+
 void Cube::SetVisibilty(int direction, bool isVisible)
 {
 	if (direction >= 6 || direction < 0) {
@@ -28,7 +62,47 @@ void Cube::Render()
 	glPopMatrix();
 }
 
-Cube::Cube(Vector3 position): position(position)
+
+void Cube::AddToBufferArrays(std::vector<Cube::Vertex>& arrayOfDirtVertices, std::vector<unsigned int>& arrayOfDirtIndices)
+{
+	unsigned int offsetIndices[6] = { 0, 1, 2, 1, 3, 2 };
+
+	for (int side = 0; side < 6; side++) {
+		//checks for each side if it is visible and then creates the corresponding quad
+		if (visible[side]) {
+			for (int i = side * 4; i < side * 4 + 4; i++) {
+				Cube::Vertex* vertex = new Cube::Vertex{
+					vertexTemplate[i].x + position.x,
+					vertexTemplate[i].y + position.y,
+					vertexTemplate[i].z + position.z, 
+
+					vertexTemplate[i].nx,
+					vertexTemplate[i].ny,
+					vertexTemplate[i].nz,
+
+					vertexTemplate[i].u,
+					vertexTemplate[i].v,
+				};
+				arrayOfDirtVertices.push_back(*vertex);
+			}
+
+			unsigned int startingIndexPosition = 4 * arrayOfDirtIndices.size() / 6;
+			//cout << "startingIndexPosition " << startingIndexPosition << ": " << endl;
+			for (int j = 0; j < 6; j++) {
+				unsigned int indexValue = startingIndexPosition + offsetIndices[j];
+		/*		cout << "indexValue " << indexValue << endl;
+
+				cout << "arrayOfDirtVertices[indexValue].x " << arrayOfDirtVertices[indexValue].x << endl;
+				cout << "arrayOfDirtVertices[indexValue].y " << arrayOfDirtVertices[indexValue].y << endl;
+				cout << "arrayOfDirtVertices[indexValue].z " << arrayOfDirtVertices[indexValue].z << endl;*/
+
+				arrayOfDirtIndices.push_back(indexValue);
+			}
+		}
+	}
+}
+
+Cube::Cube(Vector3 position) : position(position)
 {
 }
 

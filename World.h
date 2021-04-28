@@ -17,6 +17,13 @@ private:
 	TextureManager textureManager; 
 	vector<Chunk*> chunks;
 	Skybox* skybox;
+
+	unsigned int vboDirt;
+	unsigned int iboDirt;
+
+	std::vector<Cube::Vertex> dirtVertices;
+	std::vector<unsigned int> dirtIndices;
+
 public: 
 	CameraController camera;
 	vector<Cube*> dirtCubes;

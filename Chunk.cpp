@@ -34,42 +34,88 @@ void Chunk::SetVisibility()
 	}
 }
 
-void Chunk::Render(TextureManager& textureManager)
+
+void Chunk::FillDirtArrays(std::vector<Cube::Vertex>& arrayOfDirtVertices, std::vector<unsigned int>& arrayOfDirtIndices)
 {
-	//grass
-	textureManager.BindTexture(textureManager.grassTexture);
-	for (int x = 0; x < 16; x++)
-	{
-		for (int z = 0; z < 16; z++)
-		{
-			if(cubes[x][heightMap[x][z]][z] != NULL)
-				cubes[x][heightMap[x][z]][z]->Render();
-		}
-	}
-
-	//stone
-	textureManager.BindTexture(textureManager.stoneTexture);
-	for (int x = 0; x < 16; x++)
-	{
-		for (int z = 0; z < 16; z++)
-		{
-			for (int y = 0; y < heightMap[x][z] - DIRT_THICKNESS; y++)
-			{
-				if (cubes[x][y][z] != NULL) cubes[x][y][z]->Render();
-			}
-		}
-	}
-
-	//dirt
-	textureManager.BindTexture(textureManager.dirtTexture);
 	for (int x = 0; x < 16; x++)
 	{
 		for (int z = 0; z < 16; z++)
 		{
 			for (int y = heightMap[x][z] - DIRT_THICKNESS; y < heightMap[x][z]; y++)
 			{
-				if (cubes[x][y][z] != NULL) cubes[x][y][z]->Render();
+				if (cubes[x][y][z] != NULL) {
+					cubes[x][y][z]->AddToBufferArrays(arrayOfDirtVertices, arrayOfDirtIndices);
+				}
 			}
 		}
 	}
+}
+
+void Chunk::FillGrassArrays(std::vector<Cube::Vertex>& arrayOfDirtVertices, std::vector<unsigned int>& arrayOfDirtIndices)
+{
+	for (int x = 0; x < 16; x++)
+	{
+		for (int z = 0; z < 16; z++)
+		{
+			for (int y = heightMap[x][z] - DIRT_THICKNESS; y < heightMap[x][z]; y++)
+			{
+				if (cubes[x][y][z] != NULL) {
+					cubes[x][y][z]->AddToBufferArrays(arrayOfDirtVertices, arrayOfDirtIndices);
+				}
+			}
+		}
+	}
+}
+
+
+void Chunk::Render(TextureManager& textureManager)
+{
+	//grass
+	// injected vbo (not created here)
+	// injected ibo (not created here)
+	// iterate to find grass
+		// cube->addToVertexBuffer(&buffer)
+		// cube->addToIndexBuffer(&buffer)
+	
+	// bind texture
+	// send buffer to gpu
+
+
+
+	//grass
+	//textureManager.BindTexture(textureManager.grassTexture);
+	//for (int x = 0; x < 16; x++)
+	//{
+	//	for (int z = 0; z < 16; z++)
+	//	{
+	//		if(cubes[x][heightMap[x][z]][z] != NULL)
+	//			cubes[x][heightMap[x][z]][z]->Render();
+	//	}
+	//}
+
+	////stone
+	//textureManager.BindTexture(textureManager.stoneTexture);
+	//for (int x = 0; x < 16; x++)
+	//{
+	//	for (int z = 0; z < 16; z++)
+	//	{
+	//		for (int y = 0; y < heightMap[x][z] - DIRT_THICKNESS; y++)
+	//		{
+	//			if (cubes[x][y][z] != NULL) cubes[x][y][z]->Render();
+	//		}
+	//	}
+	//}
+
+	////dirt
+	//textureManager.BindTexture(textureManager.dirtTexture);
+	//for (int x = 0; x < 16; x++)
+	//{
+	//	for (int z = 0; z < 16; z++)
+	//	{
+	//		for (int y = heightMap[x][z] - DIRT_THICKNESS; y < heightMap[x][z]; y++)
+	//		{
+	//			if (cubes[x][y][z] != NULL) cubes[x][y][z]->Render();
+	//		}
+	//	}
+	//}
 }
