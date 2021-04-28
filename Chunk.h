@@ -20,5 +20,6 @@ public:
 	void Render(TextureManager &textureManager);
 
 	void FillDirtArrays(std::vector<Cube::Vertex>& arrayOfDirtVertices, std::vector<unsigned int>& arrayOfDirtIndices);
-	void FillGrassArrays(std::vector<Cube::Vertex>& arrayOfDirtVertices, std::vector<unsigned int>& arrayOfDirtIndices);
+	void FillGrassArrays(std::vector<Cube::Vertex>& arrayOfGrassVertices, std::vector<unsigned int>& arrayOfGrassIndices);
+	void FillStoneArrays(std::vector<Cube::Vertex>& arrayOfStoneVertices, std::vector<unsigned int>& arrayOfStoneIndices);
 };

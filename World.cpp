@@ -43,7 +43,22 @@ void World::RenderWorld()
 	//}
 
 	textureManager.BindTexture(textureManager.dirtTexture);
+	//glBindBuffer(GL_ARRAY_BUFFER, vboDirt);
+	glBindVertexArray(vboDirt);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboDirt);
 	glDrawElements(GL_TRIANGLES, dirtIndices.size(), GL_UNSIGNED_INT, (void*) 0);
+	
+	textureManager.BindTexture(textureManager.grassTexture);
+	glBindVertexArray(vboGrass);
+	glBindBuffer(GL_ARRAY_BUFFER, vboGrass); // this does nothing?
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboGrass); // this does nothing?
+	glDrawElements(GL_TRIANGLES, grassIndices.size(), GL_UNSIGNED_INT, (void*)0);
+	
+	textureManager.BindTexture(textureManager.stoneTexture);
+	glBindVertexArray(vboStone);
+	glBindBuffer(GL_ARRAY_BUFFER, vboStone);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboStone);
+	glDrawElements(GL_TRIANGLES, stoneIndices.size(), GL_UNSIGNED_INT, (void*)0);
 
 	//water still to come
 }
@@ -64,14 +79,56 @@ World::World()
 
 			// filling in buffer arrays
 			newChunk->FillDirtArrays(dirtVertices, dirtIndices);
+			newChunk->FillGrassArrays(grassVertices, grassIndices);
+			newChunk->FillStoneArrays(stoneVertices, stoneIndices);
 		}
 	}
 
-
-	//Cube cube(Vector3(0, 10, 0));
-	//cube.AddToBufferArrays(dirtVertices, dirtIndices);
-
 	// create buffers
+	
+	
+	//grass
+	glGenBuffers(1, &vboGrass);
+	glBindBuffer(GL_ARRAY_BUFFER, vboGrass);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Cube::Vertex) * grassVertices.size(), &grassVertices[0].x, GL_STATIC_DRAW);
+	
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, sizeof(Cube::Vertex), BUFFER_OFFSET(0)); // The starting point of the VBO, for the vertices
+	
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glNormalPointer(GL_FLOAT, sizeof(Cube::Vertex), BUFFER_OFFSET(12)); // The starting point of normals, 12 bytes away
+	
+	glClientActiveTexture(GL_TEXTURE0);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glTexCoordPointer(2, GL_FLOAT, sizeof(Cube::Vertex), BUFFER_OFFSET(24)); // The starting point of texcoords, 24 bytes away
+	
+	
+	glGenBuffers(1, &iboGrass);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboGrass);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * grassIndices.size(), &grassIndices.front(), GL_STATIC_DRAW);
+	
+	
+	//stone
+	glGenBuffers(1, &vboStone);
+	glBindBuffer(GL_ARRAY_BUFFER, vboStone);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Cube::Vertex) * stoneVertices.size(), &stoneVertices[0].x, GL_STATIC_DRAW);
+	
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, sizeof(Cube::Vertex), BUFFER_OFFSET(0)); // The starting point of the VBO, for the vertices
+	
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glNormalPointer(GL_FLOAT, sizeof(Cube::Vertex), BUFFER_OFFSET(12)); // The starting point of normals, 12 bytes away
+	
+	glClientActiveTexture(GL_TEXTURE0);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glTexCoordPointer(2, GL_FLOAT, sizeof(Cube::Vertex), BUFFER_OFFSET(24)); // The starting point of texcoords, 24 bytes away
+	
+	
+	glGenBuffers(1, &iboStone);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboStone);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * stoneIndices.size(), &stoneIndices.front(), GL_STATIC_DRAW);
+
+	//dirt
 	glGenBuffers(1, &vboDirt);
 	glBindBuffer(GL_ARRAY_BUFFER, vboDirt);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Cube::Vertex) * dirtVertices.size(), &dirtVertices[0].x, GL_STATIC_DRAW);

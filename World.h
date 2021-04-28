@@ -20,9 +20,17 @@ private:
 
 	unsigned int vboDirt;
 	unsigned int iboDirt;
+	unsigned int vboGrass;
+	unsigned int iboGrass;
+	unsigned int vboStone;
+	unsigned int iboStone;
 
 	std::vector<Cube::Vertex> dirtVertices;
-	std::vector<unsigned int> dirtIndices;
+	std::vector<unsigned int> dirtIndices;	
+	std::vector<Cube::Vertex> grassVertices;
+	std::vector<unsigned int> grassIndices;	
+	std::vector<Cube::Vertex> stoneVertices;
+	std::vector<unsigned int> stoneIndices;
 
 public: 
 	CameraController camera;

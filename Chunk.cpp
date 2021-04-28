@@ -51,17 +51,27 @@ void Chunk::FillDirtArrays(std::vector<Cube::Vertex>& arrayOfDirtVertices, std::
 	}
 }
 
-void Chunk::FillGrassArrays(std::vector<Cube::Vertex>& arrayOfDirtVertices, std::vector<unsigned int>& arrayOfDirtIndices)
+void Chunk::FillGrassArrays(std::vector<Cube::Vertex>& arrayOfGrassVertices, std::vector<unsigned int>& arrayOfGrassIndices)
 {
 	for (int x = 0; x < 16; x++)
 	{
 		for (int z = 0; z < 16; z++)
 		{
-			for (int y = heightMap[x][z] - DIRT_THICKNESS; y < heightMap[x][z]; y++)
+			if(cubes[x][heightMap[x][z]][z] != NULL)
+				cubes[x][heightMap[x][z]][z]->AddToBufferArrays(arrayOfGrassVertices, arrayOfGrassIndices);
+		}
+	}
+}
+
+void Chunk::FillStoneArrays(std::vector<Cube::Vertex>& arrayOfStoneVertices, std::vector<unsigned int>& arrayOfStoneIndices)
+{
+	for (int x = 0; x < 16; x++)
+	{
+		for (int z = 0; z < 16; z++)
+		{
+			for (int y = 0; y < heightMap[x][z] - DIRT_THICKNESS; y++)
 			{
-				if (cubes[x][y][z] != NULL) {
-					cubes[x][y][z]->AddToBufferArrays(arrayOfDirtVertices, arrayOfDirtIndices);
-				}
+				if (cubes[x][y][z] != NULL) cubes[x][y][z]->AddToBufferArrays(arrayOfStoneVertices, arrayOfStoneIndices);
 			}
 		}
 	}
