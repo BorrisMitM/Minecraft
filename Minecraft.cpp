@@ -44,14 +44,14 @@ int main(void)
 		deltaTime = timeSinceStart - oldTimeSinceStart;
 		deltaTime = deltaTime;
 		oldTimeSinceStart = timeSinceStart;
-
+		cout << 1.0f / deltaTime << endl;
 		world.HandleInput(deltaTime);
 		world.Update(deltaTime);
 		world.RenderWorld();
 
 
 		glFlush();
-		Sleep(30);
+		//Sleep(30);
 		window.Present();
 	}
 }
