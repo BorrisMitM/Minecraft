@@ -12,7 +12,38 @@ void World::Update(float dt)
 {
 	camera.Update(dt);
 	skybox->SetPosition(camera.getPosition());
+
+
+	//this can be commented in and out, later will be replaced for other player position
+	playerPosition = camera.getPosition();
+
+	//calculate if player is still in the current chunk
+	//a chunk has a grid position and reaches 16 units into x and z 
+
+	Vector3 chunkOriginWorldPosition = Vector3(currentChunk->gridPosX * 16, 0, currentChunk->gridPosZ * 16);
+	if (playerPosition.x < chunkOriginWorldPosition.x 
+		|| playerPosition.z < chunkOriginWorldPosition.z 
+		|| playerPosition.x >= chunkOriginWorldPosition.x + 16 
+		|| playerPosition.z >= chunkOriginWorldPosition.z + 16)
+	{
+		int playerGridPositionX = (int)round(playerPosition.x);
+		int playerGridPositionZ = (int)round(playerPosition.z);
+		//find new Chunk and throw out far away chunks
+		for (int i = 0; i < chunks.size(); i++)
+		{
+			if(playerGridPositionX >= chunks[i]->gridPosX * 16
+				&& playerGridPositionZ >= chunks[i]->gridPosZ * 16
+				&& playerGridPositionX < chunks[i]->gridPosX * 16 + 16
+				&& playerGridPositionZ < chunks[i]->gridPosZ * 16 + 16)
+			{
+				currentChunk = chunks[i];
+				cout << "New Current Chunk Position:" << currentChunk->gridPosX << ", " << currentChunk->gridPosZ << endl;
+				break;
+			}
+		}
+	}
 }
+
 
 void World::RenderWorld()
 {
@@ -87,9 +118,9 @@ World::World()
 			Chunk* newChunk = terrainGenerator.GenerateChunk(x, z);
 			//newChunk->SetVisibility();
 			chunks.push_back(newChunk);
+			if (newChunk->gridPosX == 0 && newChunk->gridPosZ == 0) currentChunk = newChunk;
 		}
 	}
-	
 	CalculateNeighbors();
 
 	GetBufferDataFromChunks();

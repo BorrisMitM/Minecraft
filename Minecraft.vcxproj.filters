@@ -54,6 +54,9 @@
     <ClCompile Include="Easing.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="Vector3i.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLWindow.h">
@@ -93,6 +96,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Easing.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector3i.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

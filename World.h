@@ -6,6 +6,7 @@
 #include "CameraController.h" 
 #include "GLWindow.h"
 #include "Skybox.h"
+#include "Vector3i.h"
 //for older generation
 #define XSIZE 20
 #define ZSIZE 20
@@ -35,6 +36,10 @@ private:
 	void CreateBuffers();
 	void CalculateNeighbors();
 	void GetBufferDataFromChunks();
+
+
+	Vector3 playerPosition;
+	Chunk* currentChunk;
 public: 
 	CameraController camera;
 	vector<Cube*> dirtCubes;
