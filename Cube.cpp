@@ -46,20 +46,20 @@ void Cube::SetVisibilty(int direction, bool isVisible)
 void Cube::Render()
 {
 	//if (!visible) return;
-	glPushMatrix();
-	glTranslatef(position.x, position.y, position.z);
-	glBegin(GL_QUADS);
-	for (int side = 0; side < 6; side++) {
-		//checks for each side if it is visible and then creates the corresponding quad
-		if (visible[side]) {
-			for (int i = side * 4; i < side * 4 + 4; i++) {
-				glTexCoord2f(uv[i * 2], uv[i * 2 + 1]);
-				glVertex3f(vert[index[i] * 3], vert[index[i] * 3 + 1], vert[index[i] * 3 + 2]);
-			}
-		}
-	}
-	glEnd();
-	glPopMatrix();
+	//glPushMatrix();
+	//glTranslatef(position.x, position.y, position.z);
+	//glBegin(GL_QUADS);
+	//for (int side = 0; side < 6; side++) {
+	//	//checks for each side if it is visible and then creates the corresponding quad
+	//	if (visible[side]) {
+	//		for (int i = side * 4; i < side * 4 + 4; i++) {
+	//			glTexCoord2f(uv[i * 2], uv[i * 2 + 1]);
+	//			glVertex3f(vert[index[i] * 3], vert[index[i] * 3 + 1], vert[index[i] * 3 + 2]);
+	//		}
+	//	}
+	//}
+	//glEnd();
+	//glPopMatrix();
 }
 
 
@@ -71,7 +71,7 @@ void Cube::AddToBufferArrays(std::vector<Cube::Vertex>& arrayOfDirtVertices, std
 		//checks for each side if it is visible and then creates the corresponding quad
 		if (visible[side]) {
 			for (int i = side * 4; i < side * 4 + 4; i++) {
-				Cube::Vertex* vertex = new Cube::Vertex{
+				Cube::Vertex vertex = Cube::Vertex{
 					vertexTemplate[i].x + position.x,
 					vertexTemplate[i].y + position.y,
 					vertexTemplate[i].z + position.z, 
@@ -83,7 +83,7 @@ void Cube::AddToBufferArrays(std::vector<Cube::Vertex>& arrayOfDirtVertices, std
 					vertexTemplate[i].u,
 					vertexTemplate[i].v,
 				};
-				arrayOfDirtVertices.push_back(*vertex);
+				arrayOfDirtVertices.push_back(vertex);
 			}
 
 			unsigned int startingIndexPosition = 4 * arrayOfDirtIndices.size() / 6;

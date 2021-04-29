@@ -77,6 +77,20 @@ void Chunk::FillStoneArrays(std::vector<Cube::Vertex>& arrayOfStoneVertices, std
 	}
 }
 
+Chunk::~Chunk()
+{
+	for (int x = 0; x < 16; x++)
+	{
+		for (int z = 0; z < 16; z++)
+		{
+			for (int y = 0; y < 256; y++)
+			{
+				if (cubes[x][y][z] != NULL) delete(cubes[x][y][z]);
+			}
+		}
+	}
+}
+
 
 void Chunk::Render(TextureManager& textureManager)
 {

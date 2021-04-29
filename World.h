@@ -32,6 +32,8 @@ private:
 	std::vector<Cube::Vertex> stoneVertices;
 	std::vector<unsigned int> stoneIndices;
 
+	void CreateBuffers();
+
 public: 
 	CameraController camera;
 	vector<Cube*> dirtCubes;
@@ -42,4 +44,5 @@ public:
 	void Update(float dt); 
 	void RenderWorld();
 	World();
+	~World();
 };
