@@ -26,21 +26,35 @@ void World::Update(float dt)
 		|| playerPosition.x >= chunkOriginWorldPosition.x + 16 
 		|| playerPosition.z >= chunkOriginWorldPosition.z + 16)
 	{
+
+		// no idea why this is not working but yeah i tried
+		
+
 		//int playerGridPositionX = (int)round(playerPosition.x);
 		//int playerGridPositionZ = (int)round(playerPosition.z);
-		//find new Chunk and throw out far away chunks
-		for (int i = 0; i < chunks.size(); i++)
-		{
-			if(playerPosition.x >= chunks[i]->gridPosX * 16
-				&& playerPosition.z >= chunks[i]->gridPosZ * 16
-				&& playerPosition.x < chunks[i]->gridPosX * 16 + 16
-				&& playerPosition.z < chunks[i]->gridPosZ * 16 + 16)
-			{
-				currentChunk = chunks[i];
-				cout << "New Current Chunk Position:" << currentChunk->gridPosX << ", " << currentChunk->gridPosZ << endl;
-				break;
-			}
-		}
+		//find new Chunk 
+		//for (int i = 0; i < chunks.size(); i++)
+		//{
+		//	if(playerPosition.x >= chunks[i]->gridPosX * 16
+		//		&& playerPosition.z >= chunks[i]->gridPosZ * 16
+		//		&& playerPosition.x < chunks[i]->gridPosX * 16 + 16
+		//		&& playerPosition.z < chunks[i]->gridPosZ * 16 + 16)
+		//	{
+		//		currentChunk = chunks[i];
+		//		cout << "New Current Chunk Position:" << currentChunk->gridPosX << ", " << currentChunk->gridPosZ << endl;
+		//		break;
+		//	}
+		//}
+		////delete far away chunks
+		//for (int i = chunks.size()-1; i >= 0; i--)
+		//{
+		//	if (abs(chunks[i]->gridPosX - currentChunk->gridPosX) > CHUNK_DISTANCE
+		//		|| abs(chunks[i]->gridPosZ - currentChunk->gridPosZ) > CHUNK_DISTANCE) 
+		//	{
+		//		cout << "Deleted Chunk at: " << chunks[i]->gridPosX << ", " << chunks[i]->gridPosZ << endl;
+		//		delete(chunks[i]);
+		//	}
+		//}
 	}
 }
 
