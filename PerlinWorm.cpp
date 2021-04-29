@@ -61,19 +61,20 @@ PerlinWorm::PerlinWorm()
 
 bool PerlinWorm::IsCaveAt(Vector3 worldPos)
 {
-	if (worldPos.y >= MIN_HEIGHT) return false;
-	Vector3 positionInWormGrid = worldPos - *startPosition; // get the relativ distance from the worm to the world position to check
-
-	//adjust the position to fit into the array ( no negative indicies for arrays)
-	positionInWormGrid.x += WORM_DISTANCE * 16;
-	positionInWormGrid.z += WORM_DISTANCE * 16;
-
-	//check if the position is inside of the worm array
-	if (positionInWormGrid.x < (WORM_DISTANCE * 2 + 1) * 16 || positionInWormGrid.z < (WORM_DISTANCE * 2 + 1) * 16 || positionInWormGrid.x >= 0 || positionInWormGrid.z >= 0) {
-		if(wormData[(int)positionInWormGrid.x][(int)positionInWormGrid.y][(int)positionInWormGrid.z])
-		return wormData[(int)positionInWormGrid.x][(int)positionInWormGrid.y][(int)positionInWormGrid.z];
-	}
-	else {
-		return false;
-	}
+	//if (worldPos.y >= MIN_HEIGHT) return false;
+	//Vector3 positionInWormGrid = worldPos - *startPosition; // get the relativ distance from the worm to the world position to check
+	//
+	////adjust the position to fit into the array ( no negative indicies for arrays)
+	//positionInWormGrid.x += WORM_DISTANCE * 16;
+	//positionInWormGrid.z += WORM_DISTANCE * 16;
+	//
+	////check if the position is inside of the worm array
+	//if (positionInWormGrid.x < (WORM_DISTANCE * 2 + 1) * 16 || positionInWormGrid.z < (WORM_DISTANCE * 2 + 1) * 16 || positionInWormGrid.x >= 0 || positionInWormGrid.z >= 0) {
+	//	if(wormData[(int)positionInWormGrid.x][(int)positionInWormGrid.y][(int)positionInWormGrid.z])
+	//	return wormData[(int)positionInWormGrid.x][(int)positionInWormGrid.y][(int)positionInWormGrid.z];
+	//}
+	//else {
+	//	return false;
+	//}
+	return false;
 }

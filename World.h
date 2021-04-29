@@ -33,7 +33,8 @@ private:
 	std::vector<unsigned int> stoneIndices;
 
 	void CreateBuffers();
-
+	void CalculateNeighbors();
+	void GetBufferDataFromChunks();
 public: 
 	CameraController camera;
 	vector<Cube*> dirtCubes;

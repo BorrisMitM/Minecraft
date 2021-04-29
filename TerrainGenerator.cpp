@@ -97,7 +97,8 @@ Chunk* TerrainGenerator::GenerateChunk(int gridPosX, int gridPosZ)
 						newChunk->cubes[x][i][z] = NULL;
 					}
 				}
-				else {
+				else 
+				{
 					Cube* cube = new Cube(gridPosX * 16 + x, i, gridPosZ * 16 + z);
 					newChunk->cubes[x][i][z] = cube;
 				}

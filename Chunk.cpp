@@ -11,23 +11,45 @@ void Chunk::SetVisibility()
 			{
   				if (cubes[x][y][z] == NULL) continue; 
 				//this can be used later for destroying blocks and activating neighboring blocks
-				if(x > 0)
+				//if(x > 0)
+				//	cubes[x][y][z]->SetVisibilty(3, cubes[x - 1][y][z] == NULL);
+				//else cubes[x][y][z]->SetVisibilty(3, true);
+				//if(y > 0)
+				//	cubes[x][y][z]->SetVisibilty(5, cubes[x][y - 1][z] == NULL);
+				//else cubes[x][y][z]->SetVisibilty(5, false);
+				//if(z > 0)
+				//	cubes[x][y][z]->SetVisibilty(2, cubes[x][y][z - 1] == NULL);
+				//else cubes[x][y][z]->SetVisibilty(2, false);
+				//if(x < 15)
+				//	cubes[x][y][z]->SetVisibilty(1, cubes[x + 1][y][z] == NULL);
+				//else cubes[x][y][z]->SetVisibilty(1, false);
+				//if(y < 255)
+				//	cubes[x][y][z]->SetVisibilty(4, cubes[x][y + 1][z] == NULL);
+				//else cubes[x][y][z]->SetVisibilty(4, false);
+				//if(z < 15)
+				//	cubes[x][y][z]->SetVisibilty(0, cubes[x][y][z + 1] == NULL);
+				//else cubes[x][y][z]->SetVisibilty(0, false);
+				if (x > 0)
 					cubes[x][y][z]->SetVisibilty(3, cubes[x - 1][y][z] == NULL);
+				else if (neighbors[3] != nullptr) cubes[x][y][z]->SetVisibilty(3, neighbors[3]->cubes[15][y][z] == NULL); // checking in left neighbor
 				else cubes[x][y][z]->SetVisibilty(3, true);
 				if(y > 0)
 					cubes[x][y][z]->SetVisibilty(5, cubes[x][y - 1][z] == NULL);
 				else cubes[x][y][z]->SetVisibilty(5, false);
 				if(z > 0)
 					cubes[x][y][z]->SetVisibilty(2, cubes[x][y][z - 1] == NULL);
+				else if (neighbors[2] != nullptr)  cubes[x][y][z]->SetVisibilty(2, neighbors[2]->cubes[x][y][15] == NULL); // checking in back neighbor
 				else cubes[x][y][z]->SetVisibilty(2, true);
 				if(x < 15)
 					cubes[x][y][z]->SetVisibilty(1, cubes[x + 1][y][z] == NULL);
+				else if (neighbors[1] != nullptr)  cubes[x][y][z]->SetVisibilty(1, neighbors[1]->cubes[0][y][z] == NULL); // checking in right neighbor
 				else cubes[x][y][z]->SetVisibilty(1, true);
 				if(y < 255)
 					cubes[x][y][z]->SetVisibilty(4, cubes[x][y + 1][z] == NULL);
-				else cubes[x][y][z]->SetVisibilty(4, true);
+				else cubes[x][y][z]->SetVisibilty(4, false);
 				if(z < 15)
 					cubes[x][y][z]->SetVisibilty(0, cubes[x][y][z + 1] == NULL);
+				else if (neighbors[0] != nullptr)  cubes[x][y][z]->SetVisibilty(0, neighbors[0]->cubes[x][y][0] == NULL); // checking in top neighbor
 				else cubes[x][y][z]->SetVisibilty(0, true);
 			}
 		}

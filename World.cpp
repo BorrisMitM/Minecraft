@@ -85,17 +85,18 @@ World::World()
 	for (int x = -CHUNK_DISTANCE; x <= CHUNK_DISTANCE; x++) {
 		for (int z = -CHUNK_DISTANCE; z <= CHUNK_DISTANCE; z++) {
 			Chunk* newChunk = terrainGenerator.GenerateChunk(x, z);
-			newChunk->SetVisibility();
+			//newChunk->SetVisibility();
 			chunks.push_back(newChunk);
-
-			// filling in buffer arrays
-			newChunk->FillDirtArrays(dirtVertices, dirtIndices);
-			newChunk->FillGrassArrays(grassVertices, grassIndices);
-			newChunk->FillStoneArrays(stoneVertices, stoneIndices);
 		}
 	}
+	
+	CalculateNeighbors();
+
+	GetBufferDataFromChunks();
+
 	CreateBuffers();
 }
+
 
 World::~World()
 {
@@ -121,10 +122,12 @@ void World::CreateBuffers()
 	//stone
 	glGenBuffers(1, &vboStone);
 	glBindBuffer(GL_ARRAY_BUFFER, vboStone);
+	if(stoneVertices.size() > 0)
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Cube::Vertex) * stoneVertices.size(), &stoneVertices[0].x, GL_STATIC_DRAW);
 
 	glGenBuffers(1, &iboStone);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboStone);
+	if(stoneIndices.size()>0)
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * stoneIndices.size(), &stoneIndices.front(), GL_STATIC_DRAW);
 
 	//dirt
@@ -134,4 +137,35 @@ void World::CreateBuffers()
 	glGenBuffers(1, &iboDirt);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboDirt);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * dirtIndices.size(), &dirtIndices.front(), GL_STATIC_DRAW);
+}
+
+void World::CalculateNeighbors()
+{
+	//why do I have to do this?
+	for (int i = 0; i < chunks.size(); i++)
+	{
+		//find neighbors for each chunk
+		int gridPosX = chunks[i]->gridPosX;
+		int gridPosZ = chunks[i]->gridPosZ;
+		for (int j = 0; j < chunks.size(); j++)
+		{
+			// up, right, down, left
+			if (gridPosX == chunks[j]->gridPosX && gridPosZ + 1 == chunks[j]->gridPosZ) chunks[i]->neighbors[0] = chunks[j];
+			if (gridPosX + 1 == chunks[j]->gridPosX && gridPosZ == chunks[j]->gridPosZ) chunks[i]->neighbors[1] = chunks[j];
+			if (gridPosX == chunks[j]->gridPosX && gridPosZ - 1 == chunks[j]->gridPosZ) chunks[i]->neighbors[2] = chunks[j];
+			if (gridPosX - 1 == chunks[j]->gridPosX && gridPosZ == chunks[j]->gridPosZ) chunks[i]->neighbors[3] = chunks[j];
+		}
+	}
+}
+
+void World::GetBufferDataFromChunks()
+{
+	for (int i = 0; i < chunks.size(); i++) {
+		chunks[i]->SetVisibility();
+
+		// filling in buffer arrays
+		chunks[i]->FillDirtArrays(dirtVertices, dirtIndices);
+		chunks[i]->FillGrassArrays(grassVertices, grassIndices);
+		chunks[i]->FillStoneArrays(stoneVertices, stoneIndices);
+	}
 }

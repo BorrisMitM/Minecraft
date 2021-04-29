@@ -15,6 +15,7 @@ class Chunk
 public:
 	int gridPosX, gridPosZ;
 	Cube* cubes[16][256][16];
+	Chunk* neighbors[4]; // up, right, down, left
 	int heightMap[16][16];
 	void SetVisibility();
 	void Render(TextureManager &textureManager);
