@@ -36,7 +36,7 @@ private:
 	void CreateBuffers();
 	void CalculateNeighbors();
 	void GetBufferDataFromChunks();
-
+	void BindBuffer(unsigned int vbo, unsigned int ibo, unsigned int texture);
 
 	Vector3 playerPosition;
 	Chunk* currentChunk;

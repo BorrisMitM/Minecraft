@@ -26,15 +26,15 @@ void World::Update(float dt)
 		|| playerPosition.x >= chunkOriginWorldPosition.x + 16 
 		|| playerPosition.z >= chunkOriginWorldPosition.z + 16)
 	{
-		int playerGridPositionX = (int)round(playerPosition.x);
-		int playerGridPositionZ = (int)round(playerPosition.z);
+		//int playerGridPositionX = (int)round(playerPosition.x);
+		//int playerGridPositionZ = (int)round(playerPosition.z);
 		//find new Chunk and throw out far away chunks
 		for (int i = 0; i < chunks.size(); i++)
 		{
-			if(playerGridPositionX >= chunks[i]->gridPosX * 16
-				&& playerGridPositionZ >= chunks[i]->gridPosZ * 16
-				&& playerGridPositionX < chunks[i]->gridPosX * 16 + 16
-				&& playerGridPositionZ < chunks[i]->gridPosZ * 16 + 16)
+			if(playerPosition.x >= chunks[i]->gridPosX * 16
+				&& playerPosition.z >= chunks[i]->gridPosZ * 16
+				&& playerPosition.x < chunks[i]->gridPosX * 16 + 16
+				&& playerPosition.z < chunks[i]->gridPosZ * 16 + 16)
 			{
 				currentChunk = chunks[i];
 				cout << "New Current Chunk Position:" << currentChunk->gridPosX << ", " << currentChunk->gridPosZ << endl;
@@ -61,46 +61,13 @@ void World::RenderWorld()
 	skybox->Render(textureManager);
 
 
-	textureManager.BindTexture(textureManager.dirtTexture);
-	glBindBuffer(GL_ARRAY_BUFFER, vboDirt);
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, sizeof(Cube::Vertex), BUFFER_OFFSET(0)); // The starting point of the VBO, for the vertices
-	
-	glEnableClientState(GL_NORMAL_ARRAY);
-	glNormalPointer(GL_FLOAT, sizeof(Cube::Vertex), BUFFER_OFFSET(12)); // The starting point of normals, 12 bytes away
-	
-	glClientActiveTexture(GL_TEXTURE0);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glTexCoordPointer(2, GL_FLOAT, sizeof(Cube::Vertex), BUFFER_OFFSET(24)); // The starting point of texcoords, 24 bytes away
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboDirt);
+	BindBuffer(vboDirt, iboDirt, textureManager.dirtTexture);
 	glDrawElements(GL_TRIANGLES, dirtIndices.size(), GL_UNSIGNED_INT, (void*) 0);
 
-	textureManager.BindTexture(textureManager.grassTexture);
-	glBindBuffer(GL_ARRAY_BUFFER, vboGrass); // this does nothing?
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, sizeof(Cube::Vertex), BUFFER_OFFSET(0)); // The starting point of the VBO, for the vertices
-	
-	glEnableClientState(GL_NORMAL_ARRAY);
-	glNormalPointer(GL_FLOAT, sizeof(Cube::Vertex), BUFFER_OFFSET(12)); // The starting point of normals, 12 bytes away
-	
-	glClientActiveTexture(GL_TEXTURE0);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glTexCoordPointer(2, GL_FLOAT, sizeof(Cube::Vertex), BUFFER_OFFSET(24)); // The starting point of texcoords, 24 bytes away
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboGrass); // this does nothing?
+	BindBuffer(vboGrass, iboGrass, textureManager.grassTexture);
 	glDrawElements(GL_TRIANGLES, grassIndices.size(), GL_UNSIGNED_INT, (void*)0);
 
-	textureManager.BindTexture(textureManager.stoneTexture);
-	glBindBuffer(GL_ARRAY_BUFFER, vboStone);
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, sizeof(Cube::Vertex), BUFFER_OFFSET(0)); // The starting point of the VBO, for the vertices
-	
-	glEnableClientState(GL_NORMAL_ARRAY);
-	glNormalPointer(GL_FLOAT, sizeof(Cube::Vertex), BUFFER_OFFSET(12)); // The starting point of normals, 12 bytes away
-	
-	glClientActiveTexture(GL_TEXTURE0);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glTexCoordPointer(2, GL_FLOAT, sizeof(Cube::Vertex), BUFFER_OFFSET(24)); // The starting point of texcoords, 24 bytes away
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboStone);
+	BindBuffer(vboStone, iboStone, textureManager.stoneTexture);
 	glDrawElements(GL_TRIANGLES, stoneIndices.size(), GL_UNSIGNED_INT, (void*)0);
 
 }
@@ -199,4 +166,20 @@ void World::GetBufferDataFromChunks()
 		chunks[i]->FillGrassArrays(grassVertices, grassIndices);
 		chunks[i]->FillStoneArrays(stoneVertices, stoneIndices);
 	}
+}
+
+void World::BindBuffer(unsigned int vbo, unsigned int ibo, unsigned int texture)
+{
+	textureManager.BindTexture(texture);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, sizeof(Cube::Vertex), BUFFER_OFFSET(0)); // The starting point of the VBO, for the vertices
+
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glNormalPointer(GL_FLOAT, sizeof(Cube::Vertex), BUFFER_OFFSET(12)); // The starting point of normals, 12 bytes away
+
+	glClientActiveTexture(GL_TEXTURE0);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glTexCoordPointer(2, GL_FLOAT, sizeof(Cube::Vertex), BUFFER_OFFSET(24)); // The starting point of texcoords, 24 bytes away
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 }
