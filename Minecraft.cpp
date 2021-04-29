@@ -25,6 +25,9 @@ int main(void)
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	glMatrixMode(GL_PROJECTION);
 	aspect = (GLfloat)640 / 480;
 	gluPerspective(45.0, aspect, 3.0, 1000.0);
