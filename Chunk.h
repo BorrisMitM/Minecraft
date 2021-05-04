@@ -13,7 +13,7 @@
 class Chunk
 {
 public:
-	int gridPosX, gridPosZ;
+	int gridPosX, gridPosZ; // position of the chunk ( in chonk space)
 	Cube* cubes[16][256][16];
 	Chunk* neighbors[4]; // up, right, down, left
 	int heightMap[16][16];
