@@ -102,6 +102,8 @@ void World::RenderWorld()
 	BindBuffer(vboStone, iboStone, textureManager.stoneTexture);
 	glDrawElements(GL_TRIANGLES, stoneIndices.size(), GL_UNSIGNED_INT, (void*)0);
 
+	BindBuffer(vboWater, iboWater, textureManager.waterTexture);
+	glDrawElements(GL_TRIANGLES, waterIndices.size(), GL_UNSIGNED_INT, (void*)0);
 }
 
 World::World()
@@ -115,6 +117,7 @@ World::World()
 		for (int z = -CHUNK_DISTANCE; z <= CHUNK_DISTANCE; z++) {
 			Chunk* newChunk = terrainGenerator.GenerateChunk(x, z);
 			//newChunk->SetVisibility();
+			newChunk->SetTransparency();
 			chunks.push_back(newChunk);
 			if (newChunk->gridPosX == 0 && newChunk->gridPosZ == 0) currentChunk = newChunk;
 		}
@@ -166,6 +169,15 @@ void World::CreateBuffers()
 	glGenBuffers(1, &iboDirt);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboDirt);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * dirtIndices.size(), &dirtIndices.front(), GL_DYNAMIC_DRAW);
+
+	// water
+	glGenBuffers(1, &vboWater);
+	glBindBuffer(GL_ARRAY_BUFFER, vboWater);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Cube::Vertex) * waterVertices.size(), &waterVertices[0].x, GL_DYNAMIC_DRAW);
+	
+	glGenBuffers(1, &iboWater);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboWater);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * waterIndices.size(), &waterIndices.front(), GL_DYNAMIC_DRAW);
 }
 
 void World::UpdateBuffers()
@@ -236,6 +248,7 @@ void World::GetBufferDataFromChunks()
 		chunks[i]->FillDirtArrays(dirtVertices, dirtIndices);
 		chunks[i]->FillGrassArrays(grassVertices, grassIndices);
 		chunks[i]->FillStoneArrays(stoneVertices, stoneIndices);
+		chunks[i]->FillWaterArrays(waterVertices, waterIndices);
 	}
 	cout << "Time to get the Buffer Data from the chunks: " << glfwGetTime() - startTime << endl;
 }

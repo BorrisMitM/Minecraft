@@ -43,6 +43,17 @@ void Cube::SetVisibilty(int direction, bool isVisible)
 	visible[direction] = isVisible;
 }
 
+void Cube::SetTransparency(bool transparency)
+{
+	transparency_ = transparency;
+}
+
+bool Cube::GetTransparency()
+{
+	return transparency_;
+}
+
+
 void Cube::Render()
 {
 	//if (!visible) return;
@@ -104,6 +115,7 @@ void Cube::AddToBufferArrays(std::vector<Cube::Vertex>& arrayOfDirtVertices, std
 
 Cube::Cube(Vector3 position) : position(position)
 {
+	transparency_ = false;
 }
 
 Cube::Cube(float x, float y, float z)
@@ -111,6 +123,8 @@ Cube::Cube(float x, float y, float z)
 	position.x = x;
 	position.y = y;
 	position.z = z;
+
+	transparency_ = false;
 }
 
 Cube::~Cube()

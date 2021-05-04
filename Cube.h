@@ -17,8 +17,11 @@ protected:
 	//int	  index[24] = { 0,1,2,3, 1,5,6,2, 5,4,7,6, 4,0,3,7, 3,2,6,7, 1,0,4,5 };
 	//determines if a certain side is visible
 	bool visible[6] = { true,true,true,true,true,true }; // back, right, front, left, up, down
+	bool transparency_;
 public:
 	void SetVisibilty(int direction, bool isVisible);
+	void SetTransparency(bool transparency);
+	bool GetTransparency();
 	Vector3 position;
 	void Render();
 

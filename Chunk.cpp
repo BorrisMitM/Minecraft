@@ -1,15 +1,15 @@
-
 #include "Chunk.h"
 
 void Chunk::SetVisibility()
 {
+	bool isVisible = true;
 	for (int x = 0; x < 16; x++)
 	{
 		for (int y = 0; y < 256; y++)
 		{
 			for (int z = 0; z < 16; z++)
 			{
-  				if (cubes[x][y][z] == NULL) continue; 
+				if (cubes[x][y][z] == NULL) continue;
 				//this can be used later for destroying blocks and activating neighboring blocks
 				//if(x > 0)
 				//	cubes[x][y][z]->SetVisibilty(3, cubes[x - 1][y][z] == NULL);
@@ -29,28 +29,86 @@ void Chunk::SetVisibility()
 				//if(z < 15)
 				//	cubes[x][y][z]->SetVisibilty(0, cubes[x][y][z + 1] == NULL);
 				//else cubes[x][y][z]->SetVisibilty(0, false);
-				if (x > 0)
-					cubes[x][y][z]->SetVisibilty(3, cubes[x - 1][y][z] == NULL);
-				else if (neighbors[3] != nullptr) cubes[x][y][z]->SetVisibilty(3, neighbors[3]->cubes[15][y][z] == NULL); // checking in left neighbor
-				else cubes[x][y][z]->SetVisibilty(3, true);
-				if(y > 0)
-					cubes[x][y][z]->SetVisibilty(5, cubes[x][y - 1][z] == NULL);
-				else cubes[x][y][z]->SetVisibilty(5, false);
-				if(z > 0)
-					cubes[x][y][z]->SetVisibilty(2, cubes[x][y][z - 1] == NULL);
-				else if (neighbors[2] != nullptr)  cubes[x][y][z]->SetVisibilty(2, neighbors[2]->cubes[x][y][15] == NULL); // checking in back neighbor
-				else cubes[x][y][z]->SetVisibilty(2, true);
-				if(x < 15)
-					cubes[x][y][z]->SetVisibilty(1, cubes[x + 1][y][z] == NULL);
-				else if (neighbors[1] != nullptr)  cubes[x][y][z]->SetVisibilty(1, neighbors[1]->cubes[0][y][z] == NULL); // checking in right neighbor
-				else cubes[x][y][z]->SetVisibilty(1, true);
-				if(y < 255)
-					cubes[x][y][z]->SetVisibilty(4, cubes[x][y + 1][z] == NULL);
-				else cubes[x][y][z]->SetVisibilty(4, false);
-				if(z < 15)
-					cubes[x][y][z]->SetVisibilty(0, cubes[x][y][z + 1] == NULL);
-				else if (neighbors[0] != nullptr)  cubes[x][y][z]->SetVisibilty(0, neighbors[0]->cubes[x][y][0] == NULL); // checking in top neighbor
-				else cubes[x][y][z]->SetVisibilty(0, true);
+
+				if (x > 0) {
+					isVisible = cubes[x - 1][y][z] == NULL || cubes[x - 1][y][z]->GetTransparency();
+					cubes[x][y][z]->SetVisibilty(3, isVisible);
+				}
+				else if (neighbors[3] != nullptr) {
+					isVisible = neighbors[3]->cubes[15][y][z] == NULL || neighbors[3]->cubes[15][y][z]->GetTransparency();
+					cubes[x][y][z]->SetVisibilty(3, isVisible); // checking in left neighbor
+				}
+				else {
+					cubes[x][y][z]->SetVisibilty(3, true);
+				}
+
+				if (x < 15) {
+					isVisible = cubes[x + 1][y][z] == NULL || cubes[x + 1][y][z]->GetTransparency();
+					cubes[x][y][z]->SetVisibilty(1, isVisible);
+				}
+				else if (neighbors[1] != nullptr) {
+					isVisible = neighbors[1]->cubes[0][y][z] == NULL || neighbors[1]->cubes[0][y][z]->GetTransparency();
+					cubes[x][y][z]->SetVisibilty(1, isVisible); // checking in right neighbor
+				}
+				else {
+					cubes[x][y][z]->SetVisibilty(1, true);
+				}
+
+				if (z > 0) {
+					isVisible = cubes[x][y][z - 1] == NULL || cubes[x][y][z - 1]->GetTransparency();
+					cubes[x][y][z]->SetVisibilty(2, isVisible);
+				}
+				else if (neighbors[2] != nullptr) {
+					isVisible = neighbors[2]->cubes[x][y][15] == NULL || neighbors[2]->cubes[x][y][15]->GetTransparency();
+					cubes[x][y][z]->SetVisibilty(2, isVisible); // checking in back neighbor
+				}
+				else {
+					cubes[x][y][z]->SetVisibilty(2, true);
+				}
+
+				if (z < 15) {
+					isVisible = cubes[x][y][z + 1] == NULL || cubes[x][y][z + 1]->GetTransparency();
+					cubes[x][y][z]->SetVisibilty(0, isVisible);
+				}
+				else if (neighbors[0] != nullptr) {
+					isVisible = neighbors[0]->cubes[x][y][0] == NULL || neighbors[0]->cubes[x][y][0]->GetTransparency();
+					cubes[x][y][z]->SetVisibilty(0, isVisible); // checking in top neighbor
+				}
+				else {
+					cubes[x][y][z]->SetVisibilty(0, true);
+				}
+
+
+				if (y > 0) {
+					isVisible = cubes[x][y - 1][z] == NULL || cubes[x][y - 1][z]->GetTransparency();
+					cubes[x][y][z]->SetVisibilty(5, isVisible);
+				}
+				else {
+					cubes[x][y][z]->SetVisibilty(5, false);
+				}
+
+				if (y < 255) {
+					isVisible = cubes[x][y + 1][z] == NULL || cubes[x][y + 1][z]->GetTransparency();
+					cubes[x][y][z]->SetVisibilty(4, isVisible);
+				}
+				else {
+					cubes[x][y][z]->SetVisibilty(4, false);
+				}
+			}
+		}
+	}
+}
+
+void Chunk::SetTransparency()
+{
+	// Iteration looking for water cubes
+	for (int x = 0; x < 16; x++)
+	{
+		for (int z = 0; z < 16; z++)
+		{
+			for (int y = heightMap[x][z] - DIRT_THICKNESS - 5; y < heightMap[x][z] - DIRT_THICKNESS; y++)
+			{
+				if (cubes[x][y][z] != NULL) cubes[x][y][z]->SetTransparency(true);
 			}
 		}
 	}
@@ -79,7 +137,7 @@ void Chunk::FillGrassArrays(std::vector<Cube::Vertex>& arrayOfGrassVertices, std
 	{
 		for (int z = 0; z < 16; z++)
 		{
-			if(cubes[x][heightMap[x][z]][z] != NULL)
+			if (cubes[x][heightMap[x][z]][z] != NULL)
 				cubes[x][heightMap[x][z]][z]->AddToBufferArrays(arrayOfGrassVertices, arrayOfGrassIndices);
 		}
 	}
@@ -91,13 +149,28 @@ void Chunk::FillStoneArrays(std::vector<Cube::Vertex>& arrayOfStoneVertices, std
 	{
 		for (int z = 0; z < 16; z++)
 		{
-			for (int y = 0; y < heightMap[x][z] - DIRT_THICKNESS; y++)
+			for (int y = 0; y < heightMap[x][z] - DIRT_THICKNESS - 5; y++)
 			{
 				if (cubes[x][y][z] != NULL) cubes[x][y][z]->AddToBufferArrays(arrayOfStoneVertices, arrayOfStoneIndices);
 			}
 		}
 	}
 }
+
+void Chunk::FillWaterArrays(std::vector<Cube::Vertex>& arrayOfWaterVertices, std::vector<unsigned int>& arrayOfWaterIndices)
+{
+	for (int x = 0; x < 16; x++)
+	{
+		for (int z = 0; z < 16; z++)
+		{
+			for (int y = heightMap[x][z] - DIRT_THICKNESS - 5; y < heightMap[x][z] - DIRT_THICKNESS; y++)
+			{
+				if (cubes[x][y][z] != NULL) cubes[x][y][z]->AddToBufferArrays(arrayOfWaterVertices, arrayOfWaterIndices);
+			}
+		}
+	}
+}
+
 
 Chunk::~Chunk()
 {
@@ -122,7 +195,7 @@ void Chunk::Render(TextureManager& textureManager)
 	// iterate to find grass
 		// cube->addToVertexBuffer(&buffer)
 		// cube->addToIndexBuffer(&buffer)
-	
+
 	// bind texture
 	// send buffer to gpu
 

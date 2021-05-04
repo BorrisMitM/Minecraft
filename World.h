@@ -26,6 +26,8 @@ private:
 	unsigned int iboGrass;
 	unsigned int vboStone;
 	unsigned int iboStone;
+	unsigned int vboWater;
+	unsigned int iboWater;
 
 	std::vector<Cube::Vertex> dirtVertices;
 	std::vector<unsigned int> dirtIndices;	
@@ -33,6 +35,8 @@ private:
 	std::vector<unsigned int> grassIndices;	
 	std::vector<Cube::Vertex> stoneVertices;
 	std::vector<unsigned int> stoneIndices;
+	std::vector<Cube::Vertex> waterVertices;
+	std::vector<unsigned int> waterIndices;
 
 	void CreateBuffers();
 	void UpdateBuffers();
