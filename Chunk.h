@@ -8,7 +8,7 @@
 #define MIN_HEIGHT 30 // gets added to the noise -> height of the lowest layer(height has this value if the noise is 0)
 #define NOISE_XMUL 3.17f // defines the used section of our perlin noise, higher numbers -> higher frequency of hills
 #define NOISE_ZMUL 3.17f
-#define CHUNK_DISTANCE 8 // how many chuncks are generated in each direction(dont know minecraft does it like this)
+#define CHUNK_DISTANCE 3 // how many chuncks are generated in each direction(dont know minecraft does it like this)
 #define DIRT_THICKNESS 10 // should not be bigger than MIN_HEIGHT
 class Chunk
 {

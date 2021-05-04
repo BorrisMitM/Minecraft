@@ -1,5 +1,5 @@
 #pragma once
-#include "World.h"
+//#include "World.h"
 #include "FastNoiseLite.h"
 #include <math.h>
 #include "Chunk.h"
@@ -12,11 +12,11 @@ private:
 public:
 
 	//--------------------old generation
-	float heightData[XSIZE][ZSIZE] = { 0.0f };
+	//float heightData[XSIZE][ZSIZE] = { 0.0f };
 	//takes world reference to be able to add cubes to it
-	void Generate(World& world);
+	//void Generate(World& world);
 	//dont use this this is only for presentation purposes
-	void GenerateWrongWorlds(World& world);
+	//void GenerateWrongWorlds(World& world);
 
 
 	//--------------------Chunk generation

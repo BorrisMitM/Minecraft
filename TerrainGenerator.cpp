@@ -1,5 +1,6 @@
 #include "TerrainGenerator.h"
-
+/*
+//NOT IN USE ONLY FOR FIRST PROTOTYPE
 void TerrainGenerator::Generate(World& world)
 {
 	// Create and configure FastNoise object
@@ -38,7 +39,7 @@ void TerrainGenerator::Generate(World& world)
 	}
 	//GenerateWrongWorlds(world);
 }
-
+//NOT IN USE ONLY FOR PRESENTATION PURPOSES
 void TerrainGenerator::GenerateWrongWorlds(World& world)
 {
 	//full spawn
@@ -63,7 +64,7 @@ void TerrainGenerator::GenerateWrongWorlds(World& world)
 		}
 	}
 }
-
+*/
 Chunk* TerrainGenerator::GenerateChunk(int gridPosX, int gridPosZ)
 {
 	Chunk* newChunk = new Chunk();

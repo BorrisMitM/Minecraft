@@ -7,10 +7,11 @@
 #include "GLWindow.h"
 #include "Skybox.h"
 #include "Vector3i.h"
+#include "TerrainGenerator.h"
 //for older generation
-#define XSIZE 20
-#define ZSIZE 20
-#define HEIGHT 7
+//#define XSIZE 20
+//#define ZSIZE 20
+//#define HEIGHT 7
 
 class World
 {
@@ -18,7 +19,7 @@ private:
 	TextureManager textureManager; 
 	vector<Chunk*> chunks;
 	Skybox* skybox;
-
+	TerrainGenerator terrainGenerator;
 	unsigned int vboDirt;
 	unsigned int iboDirt;
 	unsigned int vboGrass;
@@ -34,6 +35,7 @@ private:
 	std::vector<unsigned int> stoneIndices;
 
 	void CreateBuffers();
+	void UpdateBuffers();
 	void CalculateNeighbors();
 	void GetBufferDataFromChunks();
 	void BindBuffer(unsigned int vbo, unsigned int ibo, unsigned int texture);
