@@ -1,13 +1,13 @@
 #include "Cloud.h"
 #include "FastNoiseLite.h"
 
-#define NOISE_XMUL 3.17f // defines the used section of our perlin noise, higher numbers -> higher frequency of hills
-#define NOISE_ZMUL 3.17f
+#define NOISE_XMUL 5.17f // defines the used section of our perlin noise, higher numbers -> higher frequency of hills
+#define NOISE_ZMUL 5.17f
 
 Cloud::Cloud()
 {
 	cloudHeight = 100;
-	cloudThreshhold = 0.5f;
+	cloudThreshhold = 0.6f;
 	gridPosX = 0;
 	gridPosZ = 0;
 }
