@@ -161,6 +161,7 @@
     <ClCompile Include="Bitmap.cpp" />
     <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="Chunk.cpp" />
+    <ClCompile Include="Cloud.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="Easing.cpp" />
     <ClCompile Include="GLWindow.cpp" />
@@ -184,6 +185,7 @@
     <ClInclude Include="Bitmap.h" />
     <ClInclude Include="CameraController.h" />
     <ClInclude Include="Chunk.h" />
+    <ClInclude Include="Cloud.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="Easing.h" />
     <ClInclude Include="FastNoiseLite.h" />

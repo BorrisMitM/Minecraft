@@ -87,5 +87,5 @@ CameraController::CameraController()
 	yaw = 180.f;
 	roll = 0.f;
 	velocityMagnitude = 50.f;
-	turnSpeed = .5f;
+	turnSpeed = 2.f;
 }

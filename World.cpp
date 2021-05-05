@@ -14,7 +14,7 @@ void World::Update(float dt)
 
 
 	//this can be commented in and out, later will be replaced for other player position
-	playerPosition = camera.getPosition();
+	//playerPosition = camera.getPosition();
 	//calculate if player is still in the current chunk
 	//a chunk has a grid position and reaches 16 units into x and z 
 
@@ -70,7 +70,7 @@ void World::Update(float dt)
 		}
 		CalculateNeighbors();
 
-		GetBufferDataFromChunks();
+		SetChunkBufferData();
 
 		UpdateBuffers();
 	}
@@ -104,6 +104,9 @@ void World::RenderWorld()
 
 	BindBuffer(vboWater, iboWater, textureManager.waterTexture);
 	glDrawElements(GL_TRIANGLES, waterIndices.size(), GL_UNSIGNED_INT, (void*)0);
+
+	BindBuffer(vboCloud, iboCloud, textureManager.cloudTexture);
+	glDrawElements(GL_TRIANGLES, waterIndices.size(), GL_UNSIGNED_INT, (void*)0);
 }
 
 World::World()
@@ -113,6 +116,9 @@ World::World()
 	skybox = new Skybox(10.0f);
 	//TerrainGenerator terrainGenerator;
 	terrainGenerator.GenerateWorms();
+
+	cloudGen.GenerateClouds();
+
 	for (int x = -CHUNK_DISTANCE; x <= CHUNK_DISTANCE; x++) {
 		for (int z = -CHUNK_DISTANCE; z <= CHUNK_DISTANCE; z++) {
 			Chunk* newChunk = terrainGenerator.GenerateChunk(x, z);
@@ -124,7 +130,7 @@ World::World()
 	}
 	CalculateNeighbors();
 
-	GetBufferDataFromChunks();
+	SetChunkBufferData();
 
 	CreateBuffers();
 }
@@ -178,6 +184,16 @@ void World::CreateBuffers()
 	glGenBuffers(1, &iboWater);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboWater);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * waterIndices.size(), &waterIndices.front(), GL_DYNAMIC_DRAW);
+
+
+	// cloud
+	glGenBuffers(1, &vboCloud);
+	glBindBuffer(GL_ARRAY_BUFFER, vboCloud);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Cube::Vertex) * cloudVertices.size(), &cloudVertices[0].x, GL_DYNAMIC_DRAW);
+
+	glGenBuffers(1, &iboCloud);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboCloud);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * cloudIndices.size(), &cloudIndices.front(), GL_DYNAMIC_DRAW);
 }
 
 void World::UpdateBuffers()
@@ -206,6 +222,14 @@ void World::UpdateBuffers()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboDirt);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * dirtIndices.size(), &dirtIndices.front(), GL_DYNAMIC_DRAW);
 	cout << "Time to Update Buffers: " << glfwGetTime() - startTime << endl;
+
+
+	//clouds
+	glBindBuffer(GL_ARRAY_BUFFER, vboCloud);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Cube::Vertex) * cloudVertices.size(), &cloudVertices[0].x, GL_DYNAMIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboCloud);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * cloudIndices.size(), &cloudIndices.front(), GL_DYNAMIC_DRAW);
 }
 
 void World::CalculateNeighbors()
@@ -232,7 +256,7 @@ void World::CalculateNeighbors()
 	cout << "Time to Calculate Neighbors: " << glfwGetTime() - startTime << endl;
 }
 
-void World::GetBufferDataFromChunks()
+void World::SetChunkBufferData()
 {
 	float startTime = glfwGetTime();
 	dirtVertices.clear();
@@ -251,6 +275,8 @@ void World::GetBufferDataFromChunks()
 		chunks[i]->FillWaterArrays(waterVertices, waterIndices);
 	}
 	cout << "Time to get the Buffer Data from the chunks: " << glfwGetTime() - startTime << endl;
+
+	cloudGen.FillCloudArrays(cloudVertices, cloudIndices);
 }
 
 void World::BindBuffer(unsigned int vbo, unsigned int ibo, unsigned int texture)

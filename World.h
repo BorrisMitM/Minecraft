@@ -3,6 +3,7 @@
 #include <vector>
 #include "TextureManager.h"
 #include "Chunk.h"
+#include "Cloud.h"
 #include "CameraController.h" 
 #include "GLWindow.h"
 #include "Skybox.h"
@@ -19,6 +20,8 @@ private:
 	TextureManager textureManager; 
 	vector<Chunk*> chunks;
 	Skybox* skybox;
+
+	Cloud cloudGen;
 	TerrainGenerator terrainGenerator;
 	unsigned int vboDirt;
 	unsigned int iboDirt;
@@ -28,6 +31,8 @@ private:
 	unsigned int iboStone;
 	unsigned int vboWater;
 	unsigned int iboWater;
+	unsigned int vboCloud;
+	unsigned int iboCloud;
 
 	std::vector<Cube::Vertex> dirtVertices;
 	std::vector<unsigned int> dirtIndices;	
@@ -37,11 +42,13 @@ private:
 	std::vector<unsigned int> stoneIndices;
 	std::vector<Cube::Vertex> waterVertices;
 	std::vector<unsigned int> waterIndices;
+	std::vector<Cube::Vertex> cloudVertices;
+	std::vector<unsigned int> cloudIndices;
 
 	void CreateBuffers();
 	void UpdateBuffers();
 	void CalculateNeighbors();
-	void GetBufferDataFromChunks();
+	void SetChunkBufferData();
 	void BindBuffer(unsigned int vbo, unsigned int ibo, unsigned int texture);
 
 	Vector3 playerPosition;
