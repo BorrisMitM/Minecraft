@@ -198,7 +198,6 @@ void World::CreateBuffers()
 
 void World::UpdateBuffers()
 {
-	float startTime = glfwGetTime();
 	//grass
 	glBindBuffer(GL_ARRAY_BUFFER, vboGrass);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Cube::Vertex) * grassVertices.size(), &grassVertices[0].x, GL_DYNAMIC_DRAW);
@@ -221,7 +220,6 @@ void World::UpdateBuffers()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Cube::Vertex) * dirtVertices.size(), &dirtVertices[0].x, GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboDirt);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * dirtIndices.size(), &dirtIndices.front(), GL_DYNAMIC_DRAW);
-	cout << "Time to Update Buffers: " << glfwGetTime() - startTime << endl;
 
 
 	//clouds
@@ -234,7 +232,6 @@ void World::UpdateBuffers()
 
 void World::CalculateNeighbors()
 {
-	float startTime = glfwGetTime();
 	for (int i = 0; i < chunks.size(); i++)
 	{
 		//find neighbors for each chunk
@@ -253,7 +250,6 @@ void World::CalculateNeighbors()
 			if (gridPosX - 1 == chunks[j]->gridPosX && gridPosZ == chunks[j]->gridPosZ) chunks[i]->neighbors[3] = chunks[j];
 		}
 	}
-	cout << "Time to Calculate Neighbors: " << glfwGetTime() - startTime << endl;
 }
 
 void World::SetChunkBufferData()

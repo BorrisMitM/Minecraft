@@ -180,7 +180,7 @@ Chunk::~Chunk()
 		{
 			for (int y = 0; y < 256; y++)
 			{
-				//if (cubes[x][y][z] != NULL) delete(cubes[x][y][z]);
+				if (cubes[x][y][z] != NULL) delete(cubes[x][y][z]);
 			}
 		}
 	}
