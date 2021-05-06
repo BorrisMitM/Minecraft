@@ -40,7 +40,6 @@ void World::Update(float dt)
 				break;
 			}
 		}
-		float time = glfwGetTime();
 		
 		//delete far away chunks
 		for (int i = chunks.size()-1; i >= 0; i--)
@@ -54,8 +53,6 @@ void World::Update(float dt)
 				delete(deleteThisChunk);
 			}
 		}
-		cout << "Time to delete far chunks: " << glfwGetTime() - time << endl;
-		time = glfwGetTime();
 		// add new chunks in
 		// get the direction of the new chunk
 		// add new row of chunks
@@ -74,19 +71,11 @@ void World::Update(float dt)
 				newChunks.push_back(newChunk);
 			}
 		}
-		cout << "Time to create new Chunks on CPU: " << glfwGetTime() - time << endl;
-		time = glfwGetTime();
 		CalculateNeighbors();
 		//add new chunks to buffer array
 		for (int i = 0; i < newChunks.size(); i++) {
 			newChunks[i]->CreateAndFillBuffer();
 		}
-
-
-		cout << "Time to create and fill " << newChunks.size() << " new Buffers: " << glfwGetTime() - time << endl;
-		//SetChunkBufferData();
-
-		//UpdateBuffers();
 	}
 }
 
@@ -111,7 +100,7 @@ void World::RenderWorld()
 		chunks[i]->Render();
 	}
 	BindBuffer(vboCloud, iboCloud, textureManager.cloudTexture);
-	glDrawElements(GL_TRIANGLES, waterIndices.size(), GL_UNSIGNED_INT, (void*)0);
+	glDrawElements(GL_TRIANGLES, cloudIndices.size(), GL_UNSIGNED_INT, (void*)0);
 }
 
 World::World()
