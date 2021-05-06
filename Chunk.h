@@ -17,6 +17,7 @@ public:
 	Cube* cubes[16][256][16];
 	Chunk* neighbors[4]; // up, right, down, left
 	int heightMap[16][16];
+	int sideAmounts[4];//amount of visible sides in the chunk for each type of cube (dirt, grass, stone, water)
 	void SetVisibility();
 	void SetTransparency();
 	void Render(TextureManager &textureManager);

@@ -55,9 +55,6 @@ private:
 	Chunk* currentChunk;
 public: 
 	CameraController camera;
-	vector<Cube*> dirtCubes;
-	vector<Cube*> cloudCubes;
-	vector<Cube*> waterCubes;
 
 	void HandleInput(float dt);
 	void Update(float dt); 

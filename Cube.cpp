@@ -91,8 +91,8 @@ void Cube::AddToBufferArrays(std::vector<Cube::Vertex>& arrayOfDirtVertices, std
 					vertexTemplate[i].ny,
 					vertexTemplate[i].nz,
 
-					vertexTemplate[i].u,
-					vertexTemplate[i].v,
+					vertexTemplate[i].u, // could modifiy these depending on block type
+					vertexTemplate[i].v, // would need a block type enum which should be fine
 				};
 				arrayOfDirtVertices.push_back(vertex);
 			}
@@ -111,6 +111,13 @@ void Cube::AddToBufferArrays(std::vector<Cube::Vertex>& arrayOfDirtVertices, std
 			}
 		}
 	}
+}
+
+int Cube::GetVisibleSides()
+{
+	int visibleSides = 0;
+	for (int i = 0; i < 6; i++) if (visible[i]) visibleSides++;
+	return visibleSides;
 }
 
 Cube::Cube(Vector3 position) : position(position)

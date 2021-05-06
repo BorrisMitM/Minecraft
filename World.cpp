@@ -53,24 +53,35 @@ void World::Update(float dt)
 		}
 
 		// add new chunks in
-		// get the direction of the new chunk(lets first only do straight ones)
+		// get the direction of the new chunk
 		// add new row of chunks
-		//only do it for one direction first
+		vector<Chunk*> newChunks;
 		if (newChunkDirection.x != 0) {
 			for (int i = -CHUNK_DISTANCE; i <= CHUNK_DISTANCE; i++) {
 				Chunk* newChunk = terrainGenerator.GenerateChunk(currentChunk->gridPosX + newChunkDirection.x * CHUNK_DISTANCE, currentChunk->gridPosZ + i);
-				chunks.push_back(newChunk);
+				chunks.push_back(newChunk); 
+				newChunks.push_back(newChunk);
 			}
 		}
 		if (newChunkDirection.z != 0) {
 			for (int i = -CHUNK_DISTANCE; i <= CHUNK_DISTANCE; i++) {
 				Chunk* newChunk = terrainGenerator.GenerateChunk(currentChunk->gridPosX + i, currentChunk->gridPosZ + newChunkDirection.z * CHUNK_DISTANCE);
 				chunks.push_back(newChunk);
+				newChunks.push_back(newChunk);
 			}
 		}
 		CalculateNeighbors();
+		//add new chunks to buffer array
+		for (int i = 0; i < newChunks.size(); i++) {
+			newChunks[i]->SetVisibility();
 
-		SetChunkBufferData();
+			// filling in buffer arrays
+			newChunks[i]->FillDirtArrays(dirtVertices, dirtIndices);
+			newChunks[i]->FillGrassArrays(grassVertices, grassIndices);
+			newChunks[i]->FillStoneArrays(stoneVertices, stoneIndices);
+			newChunks[i]->FillWaterArrays(waterVertices, waterIndices);
+		}
+		//SetChunkBufferData();
 
 		UpdateBuffers();
 	}
@@ -274,6 +285,7 @@ void World::SetChunkBufferData()
 
 	cloudGen.FillCloudArrays(cloudVertices, cloudIndices);
 }
+
 
 void World::BindBuffer(unsigned int vbo, unsigned int ibo, unsigned int texture)
 {
