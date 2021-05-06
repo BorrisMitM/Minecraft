@@ -41,4 +41,5 @@ Cube* Raycast::Cast(Vector3 startPos, Vector3 dir, int distance, World& world)
 	}
 	//do the math
 	//return closest cube
+	return NULL;
 }
