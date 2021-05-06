@@ -8,23 +8,29 @@
 #define MIN_HEIGHT 30 // gets added to the noise -> height of the lowest layer(height has this value if the noise is 0)
 #define NOISE_XMUL 3.17f // defines the used section of our perlin noise, higher numbers -> higher frequency of hills
 #define NOISE_ZMUL 3.17f
-#define CHUNK_DISTANCE 1 // how many chuncks are generated in each direction(dont know minecraft does it like this)
+#define CHUNK_DISTANCE 4 // how many chuncks are generated in each direction(dont know minecraft does it like this)
 #define DIRT_THICKNESS 10 // should not be bigger than MIN_HEIGHT
 class Chunk
 {
+	unsigned int vbo;
+	unsigned int ibo;
+	std::vector<Cube::Vertex> vertices;
+	std::vector<unsigned int> indices;
+
+	void FillDirtArrays();
+	void FillGrassArrays();
+	void FillStoneArrays();
+	void FillWaterArrays();
 public:
 	int gridPosX, gridPosZ; // position of the chunk ( in chonk space)
 	Cube* cubes[16][256][16];
 	Chunk* neighbors[4]; // up, right, down, left
 	int heightMap[16][16];
-	int sideAmounts[4];//amount of visible sides in the chunk for each type of cube (dirt, grass, stone, water)
-	void SetVisibility();
+	void SetVisibility(int x, int y, int z);
 	void SetTransparency();
-	void Render(TextureManager &textureManager);
 
-	void FillDirtArrays(std::vector<Cube::Vertex>& arrayOfDirtVertices, std::vector<unsigned int>& arrayOfDirtIndices);
-	void FillGrassArrays(std::vector<Cube::Vertex>& arrayOfGrassVertices, std::vector<unsigned int>& arrayOfGrassIndices);
-	void FillStoneArrays(std::vector<Cube::Vertex>& arrayOfStoneVertices, std::vector<unsigned int>& arrayOfStoneIndices);
-	void FillWaterArrays(std::vector<Cube::Vertex>& arrayOfStoneVertices, std::vector<unsigned int>& arrayOfStoneIndices);
+	void CreateAndFillBuffer();
+
+	void Render();
 	~Chunk();
 };

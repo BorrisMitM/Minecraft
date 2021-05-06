@@ -10,12 +10,13 @@ class TextureManager
 {
 private:
 public:
-	GLuint		  grassTexture;
-	GLuint		  dirtTexture;
-	GLuint		  stoneTexture;
-	GLuint		  cloudTexture;
-	GLuint		  skyboxTexture;
-	GLuint		  waterTexture;
+	//GLuint		  grassTexture;
+	//GLuint		  dirtTexture;
+	//GLuint		  stoneTexture;
+	GLuint		cloudTexture;
+	GLuint		skyboxTexture;
+	//GLuint		  waterTexture;
+	GLuint		chunkAtlas;
 	void LoadTextures();
 	void BindTexture(GLuint textureID);
 };

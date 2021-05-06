@@ -2,6 +2,7 @@
 
 #define BUFFER_OFFSET(i) ((void*)(i))
 
+
 void World::HandleInput(float dt)
 {
 	camera.HandleInput(dt);
@@ -14,7 +15,7 @@ void World::Update(float dt)
 
 
 	//this can be commented in and out, later will be replaced for other player position
-	//playerPosition = camera.getPosition();
+	playerPosition = camera.getPosition();
 	//calculate if player is still in the current chunk
 	//a chunk has a grid position and reaches 16 units into x and z 
 
@@ -39,6 +40,8 @@ void World::Update(float dt)
 				break;
 			}
 		}
+		float time = glfwGetTime();
+		
 		//delete far away chunks
 		for (int i = chunks.size()-1; i >= 0; i--)
 		{
@@ -51,7 +54,8 @@ void World::Update(float dt)
 				delete(deleteThisChunk);
 			}
 		}
-
+		cout << "Time to delete far chunks: " << glfwGetTime() - time << endl;
+		time = glfwGetTime();
 		// add new chunks in
 		// get the direction of the new chunk
 		// add new row of chunks
@@ -70,20 +74,19 @@ void World::Update(float dt)
 				newChunks.push_back(newChunk);
 			}
 		}
+		cout << "Time to create new Chunks on CPU: " << glfwGetTime() - time << endl;
+		time = glfwGetTime();
 		CalculateNeighbors();
 		//add new chunks to buffer array
 		for (int i = 0; i < newChunks.size(); i++) {
-			newChunks[i]->SetVisibility();
-
-			// filling in buffer arrays
-			newChunks[i]->FillDirtArrays(dirtVertices, dirtIndices);
-			newChunks[i]->FillGrassArrays(grassVertices, grassIndices);
-			newChunks[i]->FillStoneArrays(stoneVertices, stoneIndices);
-			newChunks[i]->FillWaterArrays(waterVertices, waterIndices);
+			newChunks[i]->CreateAndFillBuffer();
 		}
+
+
+		cout << "Time to create and fill " << newChunks.size() << " new Buffers: " << glfwGetTime() - time << endl;
 		//SetChunkBufferData();
 
-		UpdateBuffers();
+		//UpdateBuffers();
 	}
 }
 
@@ -103,19 +106,10 @@ void World::RenderWorld()
 
 	skybox->Render(textureManager);
 
-
-	BindBuffer(vboDirt, iboDirt, textureManager.dirtTexture);
-	glDrawElements(GL_TRIANGLES, dirtIndices.size(), GL_UNSIGNED_INT, (void*) 0);
-
-	BindBuffer(vboGrass, iboGrass, textureManager.grassTexture);
-	glDrawElements(GL_TRIANGLES, grassIndices.size(), GL_UNSIGNED_INT, (void*)0);
-
-	BindBuffer(vboStone, iboStone, textureManager.stoneTexture);
-	glDrawElements(GL_TRIANGLES, stoneIndices.size(), GL_UNSIGNED_INT, (void*)0);
-
-	BindBuffer(vboWater, iboWater, textureManager.waterTexture);
-	glDrawElements(GL_TRIANGLES, waterIndices.size(), GL_UNSIGNED_INT, (void*)0);
-
+	textureManager.BindTexture(textureManager.chunkAtlas);
+	for (int i = 0; i < chunks.size(); i++) {
+		chunks[i]->Render();
+	}
 	BindBuffer(vboCloud, iboCloud, textureManager.cloudTexture);
 	glDrawElements(GL_TRIANGLES, waterIndices.size(), GL_UNSIGNED_INT, (void*)0);
 }
@@ -125,11 +119,10 @@ World::World()
 	textureManager.LoadTextures();
 
 	skybox = new Skybox(10.0f);
-	//TerrainGenerator terrainGenerator;
 	terrainGenerator.GenerateWorms();
 
 	cloudGen.GenerateClouds();
-
+	cloudGen.FillCloudArrays(cloudVertices, cloudIndices);
 	for (int x = -CHUNK_DISTANCE; x <= CHUNK_DISTANCE; x++) {
 		for (int z = -CHUNK_DISTANCE; z <= CHUNK_DISTANCE; z++) {
 			Chunk* newChunk = terrainGenerator.GenerateChunk(x, z);
@@ -139,11 +132,14 @@ World::World()
 			if (newChunk->gridPosX == 0 && newChunk->gridPosZ == 0) currentChunk = newChunk;
 		}
 	}
+
 	CalculateNeighbors();
 
-	SetChunkBufferData();
+	for (int i = 0; i < chunks.size(); i++) {
+		chunks[i]->CreateAndFillBuffer();
+	}
 
-	CreateBuffers();
+	CreateCloudBuffers();
 }
 
 
@@ -156,47 +152,8 @@ World::~World()
 }
 
 
-void World::CreateBuffers()
+void World::CreateCloudBuffers()
 {
-	//grass
-	glGenBuffers(1, &vboGrass);
-	glBindBuffer(GL_ARRAY_BUFFER, vboGrass);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Cube::Vertex) * grassVertices.size(), &grassVertices[0].x, GL_DYNAMIC_DRAW);
-
-	glGenBuffers(1, &iboGrass);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboGrass);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * grassIndices.size(), &grassIndices.front(), GL_DYNAMIC_DRAW);
-
-
-	//stone
-	glGenBuffers(1, &vboStone);
-	glBindBuffer(GL_ARRAY_BUFFER, vboStone);
-	if(stoneVertices.size() > 0)
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Cube::Vertex) * stoneVertices.size(), &stoneVertices[0].x, GL_DYNAMIC_DRAW);
-
-	glGenBuffers(1, &iboStone);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboStone);
-	if(stoneIndices.size()>0)
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * stoneIndices.size(), &stoneIndices.front(), GL_DYNAMIC_DRAW);
-
-	//dirt
-	glGenBuffers(1, &vboDirt);
-	glBindBuffer(GL_ARRAY_BUFFER, vboDirt);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Cube::Vertex) * dirtVertices.size(), &dirtVertices[0].x, GL_DYNAMIC_DRAW);
-	glGenBuffers(1, &iboDirt);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboDirt);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * dirtIndices.size(), &dirtIndices.front(), GL_DYNAMIC_DRAW);
-
-	// water
-	glGenBuffers(1, &vboWater);
-	glBindBuffer(GL_ARRAY_BUFFER, vboWater);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Cube::Vertex) * waterVertices.size(), &waterVertices[0].x, GL_DYNAMIC_DRAW);
-	
-	glGenBuffers(1, &iboWater);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboWater);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * waterIndices.size(), &waterIndices.front(), GL_DYNAMIC_DRAW);
-
-
 	// cloud
 	glGenBuffers(1, &vboCloud);
 	glBindBuffer(GL_ARRAY_BUFFER, vboCloud);
@@ -209,30 +166,6 @@ void World::CreateBuffers()
 
 void World::UpdateBuffers()
 {
-	//grass
-	glBindBuffer(GL_ARRAY_BUFFER, vboGrass);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Cube::Vertex) * grassVertices.size(), &grassVertices[0].x, GL_DYNAMIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboGrass);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * grassIndices.size(), &grassIndices.front(), GL_DYNAMIC_DRAW);
-
-
-	//stone
-	glBindBuffer(GL_ARRAY_BUFFER, vboStone);
-	if (stoneVertices.size() > 0)
-		glBufferData(GL_ARRAY_BUFFER, sizeof(Cube::Vertex) * stoneVertices.size(), &stoneVertices[0].x, GL_DYNAMIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboStone);
-	if (stoneIndices.size() > 0)
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * stoneIndices.size(), &stoneIndices.front(), GL_DYNAMIC_DRAW);
-
-	//dirt
-	glBindBuffer(GL_ARRAY_BUFFER, vboDirt);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Cube::Vertex) * dirtVertices.size(), &dirtVertices[0].x, GL_DYNAMIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboDirt);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * dirtIndices.size(), &dirtIndices.front(), GL_DYNAMIC_DRAW);
-
-
 	//clouds
 	glBindBuffer(GL_ARRAY_BUFFER, vboCloud);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Cube::Vertex) * cloudVertices.size(), &cloudVertices[0].x, GL_DYNAMIC_DRAW);
@@ -261,29 +194,6 @@ void World::CalculateNeighbors()
 			if (gridPosX - 1 == chunks[j]->gridPosX && gridPosZ == chunks[j]->gridPosZ) chunks[i]->neighbors[3] = chunks[j];
 		}
 	}
-}
-
-void World::SetChunkBufferData()
-{
-	float startTime = glfwGetTime();
-	dirtVertices.clear();
-	dirtIndices.clear();
-	grassIndices.clear();
-	grassVertices.clear();
-	stoneVertices.clear();
-	stoneIndices.clear();
-	for (int i = 0; i < chunks.size(); i++) {
-		chunks[i]->SetVisibility();
-
-		// filling in buffer arrays
-		chunks[i]->FillDirtArrays(dirtVertices, dirtIndices);
-		chunks[i]->FillGrassArrays(grassVertices, grassIndices);
-		chunks[i]->FillStoneArrays(stoneVertices, stoneIndices);
-		chunks[i]->FillWaterArrays(waterVertices, waterIndices);
-	}
-	cout << "Time to get the Buffer Data from the chunks: " << glfwGetTime() - startTime << endl;
-
-	cloudGen.FillCloudArrays(cloudVertices, cloudIndices);
 }
 
 

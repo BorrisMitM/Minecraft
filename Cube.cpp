@@ -33,6 +33,20 @@ const Cube::Vertex Cube::vertexTemplate[36] = {
 	{1.0,0.0,0.0 ,0.0,-1.0,0.0 ,1.0,0.33}
 };
 
+//see MinecraftAtlas.png for reference
+float Cube::GetUVOffsetX()
+{
+	float offset = 0;
+	if (type == BlockType::Dirt || type == BlockType::Water) offset = 0.5f;
+	return offset;
+}
+
+float Cube::GetUVOffsetY()
+{
+	float offset = 0;
+	if (type == BlockType::Dirt || type == BlockType::Grass) offset = 0.5f;
+	return offset;
+}
 
 void Cube::SetVisibilty(int direction, bool isVisible)
 {
@@ -85,14 +99,14 @@ void Cube::AddToBufferArrays(std::vector<Cube::Vertex>& arrayOfDirtVertices, std
 				Cube::Vertex vertex = Cube::Vertex{
 					vertexTemplate[i].x + position.x,
 					vertexTemplate[i].y + position.y,
-					vertexTemplate[i].z + position.z, 
+					vertexTemplate[i].z + position.z,
 
 					vertexTemplate[i].nx,
 					vertexTemplate[i].ny,
 					vertexTemplate[i].nz,
 
-					vertexTemplate[i].u, // could modifiy these depending on block type
-					vertexTemplate[i].v, // would need a block type enum which should be fine
+					vertexTemplate[i].u * 0.5f + GetUVOffsetX(), // could modifiy these depending on block type
+					vertexTemplate[i].v * 0.5f + GetUVOffsetY() // would need a block type enum which should be fine
 				};
 				arrayOfDirtVertices.push_back(vertex);
 			}

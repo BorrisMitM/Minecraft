@@ -15,6 +15,8 @@ protected:
 	//determines if a certain side is visible
 	bool visible[6] = { true,true,true,true,true,true }; // back, right, front, left, up, down
 	bool transparency_;
+	float GetUVOffsetX();
+	float GetUVOffsetY();
 public:
 	void SetVisibilty(int direction, bool isVisible);
 	void SetTransparency(bool transparency);
