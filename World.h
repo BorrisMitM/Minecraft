@@ -37,8 +37,8 @@ private:
 	void BindBuffer(unsigned int vbo, unsigned int ibo, unsigned int texture);
 
 	Vector3 playerPosition;
-	Chunk* currentChunk;
 public: 
+	Chunk* currentChunk;
 	CameraController camera;
 
 	void HandleInput(float dt);
