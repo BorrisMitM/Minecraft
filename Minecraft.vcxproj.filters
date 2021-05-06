@@ -87,6 +87,9 @@
     <ClCompile Include="Cloud.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="Raycast.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLWindow.h">
@@ -156,6 +159,9 @@
       <Filter>Headerdateien\imGUI</Filter>
     </ClInclude>
     <ClInclude Include="Cloud.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Raycast.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
