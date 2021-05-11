@@ -53,6 +53,7 @@ void CameraController::HandleInput(float dt)
 	if (roll < 0) roll += 360.f;
 	if (roll > 360) roll -= 360.f;
 	
+
 	
 }
 
@@ -75,7 +76,7 @@ void CameraController::Update(float dt)
 	up.z = -sinYaw * sinRoll - sinPitch * cosRoll * -cosYaw;
 
 	side = forward.cross(up);
-
+	
 }
 
 CameraController::CameraController()

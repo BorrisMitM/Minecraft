@@ -22,6 +22,8 @@ public:
 	Vector3 operator * (float const& v);
 
 	Vector3 cross(const Vector3& v2);
+	float dot(const Vector3& v2);
+	float sqrdMagnitude();//length of the vector to the power of 2
 	void Normalize();
 	void Print();
 };

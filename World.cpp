@@ -1,5 +1,6 @@
 #include "World.h"
 
+#include "Raycast.h"
 #define BUFFER_OFFSET(i) ((void*)(i))
 
 
@@ -77,6 +78,8 @@ void World::Update(float dt)
 			newChunks[i]->CreateAndFillBuffer();
 		}
 	}
+	Cube* hitCube = Raycast::Cast(camera.getPosition(), Vector3(0, -1, 0), 10, *this);
+	if (hitCube != NULL) hitCube->position.Print();
 }
 
 

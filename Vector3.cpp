@@ -62,6 +62,16 @@ Vector3 Vector3::cross(const Vector3& v2) {
 	return cross;
 }
 
+float Vector3::dot(const Vector3& v2)
+{
+	return x * v2.x + y * v2.y + z * v2.z;
+}
+
+float Vector3::sqrdMagnitude()
+{
+	return x * x + y * y + z * z;
+}
+
 void Vector3::Normalize()
 {
 	float length = sqrt(x * x + y * y + z * z);
