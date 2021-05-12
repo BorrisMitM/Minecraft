@@ -14,14 +14,20 @@ Cube* Raycast::Cast(Vector3 startPos, Vector3 dir, int distance, World& world)
 	Vector3 offset = Vector3(.5f, .5f, -.5f);
 	vector<Cube*> cubes;
 	Vector3i startPosIndex(startPos.x, startPos.y, startPos.z);
-	if (startPosIndex.x < 0) {
-		startPosIndex.x = 16 + startPosIndex.x % 16;
-	}
-	else startPosIndex.x %= 16;
-	if (startPosIndex.z < 0) {
-		startPosIndex.z = 16 + startPosIndex.z % 16;
-	}
-	else startPosIndex.z %= 16;
+	startPosIndex.x = startPosIndex.x - world.currentChunk->gridPosX * 16;
+	startPosIndex.z = startPosIndex.z - world.currentChunk->gridPosZ * 16;
+
+
+	//if (startPosIndex.x < 0) {
+	//	startPosIndex.x = 15 + startPosIndex.x % 16;
+	//}
+	//else startPosIndex.x %= 16;
+	//if (startPosIndex.z < 0) {
+	//	startPosIndex.z = 15 + startPosIndex.z % 16;
+	//}
+	//else startPosIndex.z %= 16;
+
+
 	Chunk* chunkToGetTheCubeFrom;
 	Vector3i cubePosInChunk;
 	//Get all the cubes in distance
@@ -69,6 +75,51 @@ Cube* Raycast::Cast(Vector3 startPos, Vector3 dir, int distance, World& world)
 					intersectionPoint.z <= cubes[i]->position.z && intersectionPoint.z > cubes[i]->position.z - 1.0f)
 					hitCubes.push_back(cubes[i]);
   			}
+		}
+		//for the bottom side
+		if (cubes[i]->position.y > startPos.y) {
+			Vector3 intersectionPoint(0, 0, 0);
+			if (IntersectPoint(dir, startPos, Vector3(0, -1, 0), cubes[i]->position, intersectionPoint)) {
+				if (intersectionPoint.x >= cubes[i]->position.x && intersectionPoint.x < cubes[i]->position.x + 1.0f &&
+					intersectionPoint.z <= cubes[i]->position.z && intersectionPoint.z > cubes[i]->position.z - 1.0f)
+					hitCubes.push_back(cubes[i]);
+			}
+		}
+		//for the left side
+		if (cubes[i]->position.x > startPos.x) {
+			Vector3 intersectionPoint(0, 0, 0);
+			if (IntersectPoint(dir, startPos, Vector3(-1, 0, 0), cubes[i]->position, intersectionPoint)) {
+				if (intersectionPoint.y >= cubes[i]->position.y && intersectionPoint.y < cubes[i]->position.y + 1.0f &&
+					intersectionPoint.z <= cubes[i]->position.z && intersectionPoint.z > cubes[i]->position.z - 1.0f)
+					hitCubes.push_back(cubes[i]);
+			}
+		}
+		//for the right side
+		if (cubes[i]->position.x + 1.0f< startPos.x) {
+			Vector3 intersectionPoint(0, 0, 0);
+			if (IntersectPoint(dir, startPos, Vector3(1, 0, 0), cubes[i]->position + Vector3(1, 0, 0), intersectionPoint)) {
+				if (intersectionPoint.y >= cubes[i]->position.y && intersectionPoint.y < cubes[i]->position.y + 1.0f &&
+					intersectionPoint.z <= cubes[i]->position.z && intersectionPoint.z > cubes[i]->position.z - 1.0f)
+					hitCubes.push_back(cubes[i]);
+			}
+		}
+		//for the front side
+		if (cubes[i]->position.z < startPos.z) {
+			Vector3 intersectionPoint(0, 0, 0);
+			if (IntersectPoint(dir, startPos, Vector3(0, 0, 1), cubes[i]->position, intersectionPoint)) {
+				if (intersectionPoint.y >= cubes[i]->position.y && intersectionPoint.y < cubes[i]->position.y + 1.0f &&
+					intersectionPoint.x >= cubes[i]->position.x && intersectionPoint.x < cubes[i]->position.x + 1.0f)
+					hitCubes.push_back(cubes[i]);
+			}
+		}
+		//for the back side
+		if (cubes[i]->position.z - 1.0f > startPos.z) {
+			Vector3 intersectionPoint(0, 0, 0);
+			if (IntersectPoint(dir, startPos, Vector3(0, 0, -1), cubes[i]->position + Vector3(0, 0, -1), intersectionPoint)) {
+				if (intersectionPoint.y >= cubes[i]->position.y && intersectionPoint.y < cubes[i]->position.y + 1.0f &&
+					intersectionPoint.x >= cubes[i]->position.x && intersectionPoint.x < cubes[i]->position.x + 1.0f)
+					hitCubes.push_back(cubes[i]);
+			}
 		}
 	}
 	if (hitCubes.size() <= 0) return NULL;

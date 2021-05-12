@@ -2,6 +2,7 @@
 #include "Vector3.h"
 #include "GLWindow.h"
 
+class World;
 class CameraController
 {
 	Vector3 position;
@@ -24,8 +25,9 @@ public:
 	const Vector3& getUp() { return up; }
 
 	void Setup(GLWindow* window);
-	void HandleInput(float dt);
+	void HandleInput(float dt, World& world);
 	void Update(float dt);
+
 	CameraController();
 
 };

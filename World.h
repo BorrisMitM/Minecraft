@@ -9,6 +9,7 @@
 #include "Skybox.h"
 #include "Vector3i.h"
 #include "TerrainGenerator.h"
+#include <algorithm>
 //for older generation
 //#define XSIZE 20
 //#define ZSIZE 20
@@ -44,6 +45,7 @@ public:
 	void HandleInput(float dt);
 	void Update(float dt); 
 	void RenderWorld();
+	void DeleteCube(Cube* cube);
 	World();
 	~World();
 };

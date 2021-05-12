@@ -6,7 +6,7 @@
 
 void World::HandleInput(float dt)
 {
-	camera.HandleInput(dt);
+	camera.HandleInput(dt, *this);
 }
 
 void World::Update(float dt)
@@ -78,8 +78,6 @@ void World::Update(float dt)
 			newChunks[i]->CreateAndFillBuffer();
 		}
 	}
-	Cube* hitCube = Raycast::Cast(camera.getPosition(), Vector3(0, -1, 0), 10, *this);
-	if (hitCube != NULL) hitCube->position.Print();
 }
 
 
@@ -104,6 +102,40 @@ void World::RenderWorld()
 	}
 	BindBuffer(vboCloud, iboCloud, textureManager.cloudTexture);
 	glDrawElements(GL_TRIANGLES, cloudIndices.size(), GL_UNSIGNED_INT, (void*)0);
+}
+
+void World::DeleteCube(Cube* cube)
+{
+	if (cube == nullptr) return;
+	int chunkGridX = floor(cube->position.x * (1.0f / 16.0f));
+	int chunkGridZ = floor(cube->position.z * (1.0f / 16.0f));
+	Vector3i cubeIndex(0,cube->position.y,0);
+	if (cube->position.x < 0) {
+		cubeIndex.x = 16 + (int)round(cube->position.x) % 16;
+	}
+	else cubeIndex.x = (int)cube->position.x % 16;
+	if (cube->position.z < 0) {
+		cubeIndex.z = 16 + (int)round(cube->position.z) % 16;
+	}
+	else cubeIndex.z = (int)cube->position.z % 16;
+	for (int i = 0; i < chunks.size(); i++) {
+		if (chunkGridX == chunks[i]->gridPosX && chunkGridZ == chunks[i]->gridPosZ) {
+			delete(cube);
+			chunks[i]->cubes[cubeIndex.x][cubeIndex.y][cubeIndex.z] = NULL;
+			chunks[i]->SetVisibility(cubeIndex.x + 1, cubeIndex.y, cubeIndex.z);
+			chunks[i]->SetVisibility(cubeIndex.x - 1, cubeIndex.y, cubeIndex.z);
+			chunks[i]->SetVisibility(cubeIndex.x, cubeIndex.y + 1, cubeIndex.z);
+			chunks[i]->SetVisibility(cubeIndex.x, cubeIndex.y - 1, cubeIndex.z);
+			chunks[i]->SetVisibility(cubeIndex.x, cubeIndex.y, cubeIndex.z + 1);
+			chunks[i]->SetVisibility(cubeIndex.x, cubeIndex.y, cubeIndex.z - 1);
+			chunks[i]->CreateAndFillBuffer();
+			//for (int j = 0; j < 4; j++) {
+			//	if()
+			//	chunks[i]->neighbors[j]->CreateAndFillBuffer();
+			//}
+			break;
+		}
+	}
 }
 
 World::World()

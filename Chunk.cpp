@@ -89,6 +89,8 @@ void Chunk::SetTransparency()
 
 void Chunk::CreateAndFillBuffer()
 {
+	vertices.clear();
+	indices.clear();
 	FillDirtArrays();
 	FillGrassArrays();
 	FillStoneArrays();
@@ -102,6 +104,7 @@ void Chunk::CreateAndFillBuffer()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), &indices.front(), GL_DYNAMIC_DRAW);
 }
+
 
 void Chunk::FillDirtArrays()
 {

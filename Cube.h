@@ -4,7 +4,7 @@
 #include <math.h>
 #include "Vector3.h"
 #include <vector>
-
+class Chunk;
 class Cube
 {
 	struct Vertex;
@@ -18,11 +18,13 @@ protected:
 	float GetUVOffsetX();
 	float GetUVOffsetY();
 public:
+	Chunk* chunk;
 	void SetVisibilty(int direction, bool isVisible);
 	void SetTransparency(bool transparency);
 	bool GetTransparency();
 	Vector3 position;
-	void Render();
+
+	void Delete();
 
 	void AddToBufferArrays(std::vector<Cube::Vertex>& arrayOfDirtVertices, std::vector<unsigned int>& arrayOfDirtIndices);
 	int GetVisibleSides();

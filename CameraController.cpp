@@ -1,6 +1,7 @@
 #include "CameraController.h"
 #include <iostream>
-
+#include "Chunk.h"
+#include "Raycast.h"
 
 void CameraController::Setup(GLWindow* window)
 {
@@ -9,7 +10,7 @@ void CameraController::Setup(GLWindow* window)
 	glfwSetInputMode(window->m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
-void CameraController::HandleInput(float dt)
+void CameraController::HandleInput(float dt, World& world)
 { 
 
 	SHORT key = ::GetAsyncKeyState(0x57) & 0x8000;//W
@@ -53,6 +54,16 @@ void CameraController::HandleInput(float dt)
 	if (roll < 0) roll += 360.f;
 	if (roll > 360) roll -= 360.f;
 	
+
+	//destroy cubes
+	
+	int mouseButton = glfwGetMouseButton(window->m_Window, 0);
+	
+	if (mouseButton == GLFW_PRESS) {
+		Cube* hitCube = Raycast::Cast(position, forward, 3, world);
+		if(hitCube != NULL)
+			hitCube->Delete();
+	}
 
 	
 }

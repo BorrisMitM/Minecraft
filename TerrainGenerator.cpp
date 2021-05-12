@@ -93,6 +93,7 @@ Chunk* TerrainGenerator::GenerateChunk(int gridPosX, int gridPosZ)
 					if (!worm->IsCaveAt(Vector3(worldX, i, worldZ))) {
 						Cube* cube = new Cube(gridPosX * 16 + x, i, gridPosZ * 16 + z);
 						newChunk->cubes[x][i][z] = cube;
+						cube->chunk = newChunk;
 					}
 					else {
 						newChunk->cubes[x][i][z] = NULL;
@@ -102,6 +103,7 @@ Chunk* TerrainGenerator::GenerateChunk(int gridPosX, int gridPosZ)
 				{
 					Cube* cube = new Cube(gridPosX * 16 + x, i, gridPosZ * 16 + z);
 					newChunk->cubes[x][i][z] = cube;
+					cube->chunk = newChunk;
 				}
 			}
 		}
