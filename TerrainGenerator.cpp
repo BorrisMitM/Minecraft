@@ -90,7 +90,7 @@ Chunk* TerrainGenerator::GenerateChunk(int gridPosX, int gridPosZ)
 				int worldX = x + gridPosX * 16;
 				int worldZ = z + gridPosZ * 16;
 				if (i < MIN_HEIGHT) {
-					if (!worm->IsCaveAt(Vector3(worldX, i, worldZ))) {
+					if (!IsCaveAt(Vector3(worldX, i, worldZ))) {
 						Cube* cube = new Cube(gridPosX * 16 + x, i, gridPosZ * 16 + z);
 						newChunk->cubes[x][i][z] = cube;
 						cube->chunk = newChunk;
@@ -114,5 +114,17 @@ Chunk* TerrainGenerator::GenerateChunk(int gridPosX, int gridPosZ)
 
 void TerrainGenerator::GenerateWorms()
 {
-	worm = new PerlinWorm();
+	for (int i = 0; i < wormAmount; i++)
+	{
+		worms.push_back(new PerlinWorm(Vector3(rand()%100, 0, rand()%100), 1000));
+	}
+}
+
+bool TerrainGenerator::IsCaveAt(Vector3 position)
+{
+	for (int i = 0; i < wormAmount; i++)
+	{
+		if (worms[i]->IsCaveAt(position)) return true;
+	}
+	return false;
 }

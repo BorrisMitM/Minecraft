@@ -6,10 +6,12 @@
 #include "World.h"
 #include "TerrainGenerator.h"
 #include "CameraController.h"
+#include <algorithm>
 // --------------------------------------------------------------------------------
 
 float timeSinceStart= 0, oldTimeSinceStart = 0;
 float deltaTime;
+float maxDeltaTime = 0.05f;
 
 int main(void)
 {
@@ -45,7 +47,7 @@ int main(void)
 
 		timeSinceStart = glfwGetTime();
 		deltaTime = timeSinceStart - oldTimeSinceStart;
-		deltaTime = deltaTime;
+		if (deltaTime > maxDeltaTime) deltaTime = maxDeltaTime;
 		oldTimeSinceStart = timeSinceStart;
 		//cout << 1.0f / deltaTime << endl;
 		world.HandleInput(deltaTime);

@@ -8,7 +8,8 @@
 class TerrainGenerator
 {
 private:
-	PerlinWorm* worm;
+	int wormAmount = 10;
+	vector<PerlinWorm*> worms;
 public:
 
 	//--------------------old generation
@@ -24,5 +25,6 @@ public:
 	//middle would be (0,0) the one right to it (1,0)
 	Chunk* GenerateChunk(int gridPosX, int gridPosZ);
 	void GenerateWorms();
+	bool IsCaveAt(Vector3 position);
 };
 
