@@ -17,46 +17,12 @@ Cube* Raycast::Cast(Vector3 startPos, Vector3 dir, int distance, World& world)
 	startPosIndex.x = startPosIndex.x - world.currentChunk->gridPosX * 16;
 	startPosIndex.z = startPosIndex.z - world.currentChunk->gridPosZ * 16;
 
-
-	//if (startPosIndex.x < 0) {
-	//	startPosIndex.x = 15 + startPosIndex.x % 16;
-	//}
-	//else startPosIndex.x %= 16;
-	//if (startPosIndex.z < 0) {
-	//	startPosIndex.z = 15 + startPosIndex.z % 16;
-	//}
-	//else startPosIndex.z %= 16;
-
-
-	Chunk* chunkToGetTheCubeFrom;
-	Vector3i cubePosInChunk;
 	//Get all the cubes in distance
 	for (int x = startPosIndex.x - distance; x <= startPosIndex.x + distance; x++) {
 		for (int y = startPosIndex.y - distance; y <= startPosIndex.y + distance; y++) {
 			for (int z = startPosIndex.z - distance; z <= startPosIndex.z + distance; z++) {
-				cubePosInChunk.x = x;
-				cubePosInChunk.y = y;
-				cubePosInChunk.z = z;
-				//check for chunk to get the cube from
-				if (x < 0) {
-					chunkToGetTheCubeFrom = world.currentChunk->neighbors[3];
-					cubePosInChunk.x += 16;
-				}
-				else if (x >= 16) {
-					chunkToGetTheCubeFrom = world.currentChunk->neighbors[1];
-					cubePosInChunk.x -= 16;
-				}
-				else chunkToGetTheCubeFrom = world.currentChunk;
-
-				if (z < 0) {
-					chunkToGetTheCubeFrom = chunkToGetTheCubeFrom->neighbors[2];
-					cubePosInChunk.z += 16;
-				}
-				else if (z >= 16) {
-					chunkToGetTheCubeFrom = chunkToGetTheCubeFrom->neighbors[0];
-					cubePosInChunk.z -= 16;
-				}
-				Cube* cubeToAdd = chunkToGetTheCubeFrom->cubes[cubePosInChunk.x][cubePosInChunk.y][cubePosInChunk.z];
+				
+				Cube* cubeToAdd = GetRelativeCube(x, y, z, world.currentChunk);
 				if(cubeToAdd != nullptr)
 					cubes.push_back(cubeToAdd);
 			}
@@ -137,3 +103,194 @@ Cube* Raycast::Cast(Vector3 startPos, Vector3 dir, int distance, World& world)
 	//return closest cube
 	return hitCubes[closestIndex];
 }
+
+//radius < 1, upExtends < 1, downExtends < 2
+bool Raycast::CylinderCast(Vector3 startPos, float upExtend, float downExtend, float radius, World& world, vector<CollisionInfo>& collisionInfo)
+{
+	float radiusSqrd = radius * radius;
+	Vector3 offset = Vector3(.5f, .5f, -.5f);
+	Vector3i startPosIndex(startPos.x, startPos.y, startPos.z);
+	startPosIndex.x = startPosIndex.x - world.currentChunk->gridPosX * 16;
+	startPosIndex.z = startPosIndex.z - world.currentChunk->gridPosZ * 16;
+	//calculate max ybottom and ytop we have to check
+	int ybottom = startPos.y - downExtend;
+	int ytop = startPos.y + upExtend;
+	//horizontal collision
+	for (int y = ybottom; y <= ytop; y++) {
+		for (int x = startPosIndex.x - 1; x <= startPosIndex.x + 1; x++) {
+			for (int z = startPosIndex.z - 1; z <= startPosIndex.z + 1; z++) {
+				if (z == startPosIndex.z && x == startPosIndex.x) continue;
+				Cube* cube = GetRelativeCube(x, y, z, world.currentChunk);
+				if (cube != NULL) {
+					int xOffset = x == startPosIndex.x - 1 ?  1 : 0;
+					int zOffset = z == startPosIndex.z + 1 ? -1 : 0;
+					Vector3 cubeVertexPosition = cube->position;
+					cubeVertexPosition.x += xOffset;
+					cubeVertexPosition.z += zOffset;
+					//zdirection
+					if (z == startPosIndex.z) {
+						//zdirection
+						float distance = abs(startPos.x - cubeVertexPosition.x);
+						if (distance < radius) {
+							CollisionInfo colInfo;
+							colInfo.cube = cube;
+							colInfo.normal = Vector3(startPosIndex.x - x, 0, 0);
+							colInfo.point = Vector3(cubeVertexPosition.x, cubeVertexPosition.y, startPos.z);
+							collisionInfo.push_back(colInfo);
+						}
+					} else if (x == startPosIndex.x) {
+						//xdirection
+						float distance = abs(startPos.z - cubeVertexPosition.z);
+						if (distance < radius) {
+							CollisionInfo colInfo;
+							colInfo.cube = cube;
+							colInfo.normal = Vector3(0, 0, startPosIndex.z - z);
+							colInfo.point = Vector3(startPos.x, cubeVertexPosition.y, cubeVertexPosition.z);
+							collisionInfo.push_back(colInfo);
+						}
+					}
+					else {
+						//diagonal
+						float zDistance = startPos.z - cubeVertexPosition.z;
+						float xDistance = startPos.x - cubeVertexPosition.x;
+						float distanceSqrd = xDistance * xDistance + zDistance * zDistance;
+						if (distanceSqrd < radiusSqrd) {
+							CollisionInfo colInfo;
+							colInfo.cube = cube;
+							colInfo.normal = startPos - cubeVertexPosition;
+							colInfo.normal.y = 0;
+							colInfo.normal.Normalize(); 
+							colInfo.point = cubeVertexPosition;
+							collisionInfo.push_back(colInfo);
+						}
+					}
+				}
+			}
+		}
+	}
+	//bottom collision
+	for (int x = startPosIndex.x - 1; x <= startPosIndex.x + 1; x++) {
+		for (int z = startPosIndex.z - 1; z <= startPosIndex.z + 1; z++) {
+			Cube* cube = GetRelativeCube(x, ybottom, z, world.currentChunk);
+			if (cube != NULL) {
+				int xOffset = x == startPosIndex.x - 1 ? 1 : 0;
+				int zOffset = z == startPosIndex.z + 1 ? -1 : 0;
+				Vector3 cubeVertexPosition = cube->position;
+				cubeVertexPosition.x += xOffset;
+				cubeVertexPosition.z += zOffset; 
+				cubeVertexPosition.y += 1;
+ 				bool colliding = false;
+				//zdirection
+				if (z == startPosIndex.z && x == startPosIndex.x) {
+					colliding = true;
+				}
+				else if (z == startPosIndex.z) {
+					//zdirection
+					float distance = abs(startPos.x - cubeVertexPosition.x);
+					if (distance < radius) {
+						colliding = true;
+					}
+				}
+				else if (x == startPosIndex.x) {
+					//xdirection
+					float distance = abs(startPos.z - cubeVertexPosition.z);
+					if (distance < radius) {
+						colliding = true;
+					}
+				}
+				else {
+					//diagonal
+					float zDistance = startPos.z - cubeVertexPosition.z;
+					float xDistance = startPos.x - cubeVertexPosition.x;
+					float distanceSqrd = xDistance * xDistance + zDistance * zDistance;
+					if (distanceSqrd < radiusSqrd) {
+						colliding = true;
+					}
+				}
+				if (colliding) {
+					CollisionInfo colInfo;
+					colInfo.cube = cube;
+					colInfo.normal = Vector3(0, 1, 0);
+					colInfo.point = Vector3(startPos.x, cubeVertexPosition.y, startPos.z);
+					collisionInfo.push_back(colInfo);
+				}
+			}
+		}
+	}
+	//top collision
+	for (int x = startPosIndex.x - 1; x <= startPosIndex.x + 1; x++) {
+		for (int z = startPosIndex.z - 1; z <= startPosIndex.z + 1; z++) {
+			Cube* cube = GetRelativeCube(x, ytop, z, world.currentChunk);
+			if (cube != NULL) {
+				int xOffset = x == startPosIndex.x - 1 ? 1 : 0;
+				int zOffset = z == startPosIndex.z + 1 ? -1 : 0;
+				Vector3 cubeVertexPosition = cube->position;
+				cubeVertexPosition.x += xOffset;
+				cubeVertexPosition.z += zOffset;
+				bool colliding = false;
+				//zdirection
+				if (z == startPosIndex.z && x == startPosIndex.x) {
+					colliding = true;
+				}
+				else if (z == startPosIndex.z) {
+					//zdirection
+					float distance = abs(startPos.x - cubeVertexPosition.x);
+					if (distance < radius) {
+						colliding = true;
+					}
+				}
+				else if (x == startPosIndex.x) {
+					//xdirection
+					float distance = abs(startPos.z - cubeVertexPosition.z);
+					if (distance < radius) {
+						colliding = true;
+					}
+				}
+				else {
+					//diagonal
+					float zDistance = startPos.z - cubeVertexPosition.z;
+					float xDistance = startPos.x - cubeVertexPosition.x;
+					float distanceSqrd = xDistance * xDistance + zDistance * zDistance;
+					if (distanceSqrd < radiusSqrd) {
+						colliding = true;
+					}
+				}
+				if (colliding) {
+					CollisionInfo colInfo;
+					colInfo.cube = cube;
+					colInfo.normal = Vector3(0, -1, 0);
+					colInfo.point = Vector3(startPos.x, cubeVertexPosition.y, startPos.z);
+					collisionInfo.push_back(colInfo);
+				}
+			}
+		}
+	}
+	return collisionInfo.size() > 0;
+}
+
+Cube* Raycast::GetRelativeCube(int x, int y, int z, Chunk* chunk)
+{
+	Chunk* chunkToGetTheCubeFrom;
+	Vector3i cubePosInChunk(x, y, z);
+	//check for chunk to get the cube from
+	if (x < 0) {
+		chunkToGetTheCubeFrom = chunk->neighbors[3];
+		cubePosInChunk.x += 16;
+	}
+	else if (x >= 16) {
+		chunkToGetTheCubeFrom = chunk->neighbors[1];
+		cubePosInChunk.x -= 16;
+	}
+	else chunkToGetTheCubeFrom = chunk;
+
+	if (z < 0) {
+		chunkToGetTheCubeFrom = chunkToGetTheCubeFrom->neighbors[2];
+		cubePosInChunk.z += 16;
+	}
+	else if (z >= 16) {
+		chunkToGetTheCubeFrom = chunkToGetTheCubeFrom->neighbors[0];
+		cubePosInChunk.z -= 16;
+	}
+	return chunkToGetTheCubeFrom->cubes[cubePosInChunk.x][cubePosInChunk.y][cubePosInChunk.z];
+}
+
