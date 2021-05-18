@@ -1,63 +1,66 @@
 #include "PerlinWorm.h"
 #include "Vector3i.h"
-PerlinWorm::PerlinWorm(Vector3 position, float length)
+PerlinWorm::PerlinWorm(Vector3 position, float length, int wormAmount)
 {
 	startPosition = position;
 	startPosition.y = 0;
 	//create noise object
-	FastNoiseLite wormYawNoise;
-	wormYawNoise.SetSeed(rand());
-	wormYawNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-	FastNoiseLite wormPitchNoise;
-	wormPitchNoise.SetSeed(rand());
-	wormPitchNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-	//FastNoiseLite wormThicknessNoise;
-	//wormThicknessNoise.SetSeed(420);
-	//wormThicknessNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-	Vector3 currentPosition = startPosition;
-	currentPosition.y = rand() % MIN_HEIGHT;
+	FastNoiseLite wormRotNoise;
+	wormRotNoise.SetSeed(rand());
+	wormRotNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+	FastNoiseLite radiusNoise;
+	radiusNoise.SetSeed(rand());
+	radiusNoise.SetNoiseType(FastNoiseLite::NoiseType::NoiseType_Value);
+	int radius = round((radiusNoise.GetNoise(0.0f,0.0f)*0.5+0.5f)*3+1);
+	int yPosition = rand() % (MIN_HEIGHT - 10) + 10;
 	Vector3 currentDirection(0, 1, 0);
+	for (int i = 0; i < wormAmount; i++) {
+		Vector3 currentPosition = startPosition;
+		currentPosition.y = yPosition;
 
-	float distance = 0;
-	float radius = 3;
-	while (distance < length) {
-		float pitch = wormPitchNoise.GetNoise(distance, 0.0f) * 90;
-		float yaw = wormYawNoise.GetNoise(distance, 0.0f) * 180;
+		float distance = 0;
 
-		float cosPitch = cosf(pitch * 3.1415 / 180);
-		float cosYaw = cosf(yaw * 3.1415 / 180);
+		while (distance < length) {
+			radius = round((radiusNoise.GetNoise(distance + length * i, 0.0f) * 0.5 + 0.5f) * 3 + 1);
 
-		float sinPitch = sinf(pitch * 3.1415 / 180);
-		float sinYaw = sinf(yaw * 3.1415 / 180);
+			float pitch = wormRotNoise.GetNoise(distance + length * i, 0.0f) * 90;
+			float yaw = wormRotNoise.GetNoise(0.0f, distance + length * i) * 180;
 
-		currentDirection.x = sinYaw * cosPitch;
-		currentDirection.y = sinPitch;
-		currentDirection.z = cosPitch * -cosYaw;
+			float cosPitch = cosf(pitch * 3.1415 / 180);
+			float cosYaw = cosf(yaw * 3.1415 / 180);
 
-		currentPosition += currentDirection;
+			float sinPitch = sinf(pitch * 3.1415 / 180);
+			float sinYaw = sinf(yaw * 3.1415 / 180);
 
-		distance += 1.0f;
-		//currentPosition.Print();
+			currentDirection.x = sinYaw * cosPitch;
+			currentDirection.y = sinPitch;
+			currentDirection.z = cosPitch * -cosYaw;
+
+			currentPosition += currentDirection;
+
+			distance += 1.0f;
+			//currentPosition.Print();
 
 
-		if (currentPosition.x < -(WORM_DISTANCE) * 16 
-			|| currentPosition.z < -(WORM_DISTANCE) * 16 
-			|| currentPosition.x >= (WORM_DISTANCE + 1) * 16 
-			|| currentPosition.z >= (WORM_DISTANCE + 1) * 16
-			|| currentPosition.y >= MIN_HEIGHT
-			|| currentPosition.y < 0) break;
-		Vector3i positionInGrid(currentPosition.x + (WORM_DISTANCE) * 16, currentPosition.y, currentPosition.z + (WORM_DISTANCE) * 16);
+			if (currentPosition.x < -(WORM_DISTANCE) * 16
+				|| currentPosition.z < -(WORM_DISTANCE) * 16
+				|| currentPosition.x >= (WORM_DISTANCE + 1) * 16
+				|| currentPosition.z >= (WORM_DISTANCE + 1) * 16
+				|| currentPosition.y >= MIN_HEIGHT
+				|| currentPosition.y <= radius) continue;
+			Vector3i positionInGrid(currentPosition.x + (WORM_DISTANCE) * 16, currentPosition.y, currentPosition.z + (WORM_DISTANCE) * 16);
 
-		for (int x = -radius; x <= radius; x++) {
-			for (int y = -radius; y <= radius; y++) {
-				for (int z = -radius; z <= radius; z++) {
-					//check if surrounding will get out of the array 
-					if (positionInGrid.x + x < 0 || positionInGrid.x + x >= (WORM_DISTANCE * 2 + 1) * 16 ||
-						positionInGrid.z + z < 0 || positionInGrid.z + z >= (WORM_DISTANCE * 2 + 1) * 16 ||
-						positionInGrid.y + y < 0 || positionInGrid.y + y >= MIN_HEIGHT) continue;
+			for (int x = -radius; x <= radius; x++) {
+				for (int y = -radius; y <= radius; y++) {
+					for (int z = -radius; z <= radius; z++) {
+						//check if surrounding will get out of the array 
+						if (positionInGrid.x + x < 0 || positionInGrid.x + x >= (WORM_DISTANCE * 2 + 1) * 16 ||
+							positionInGrid.z + z < 0 || positionInGrid.z + z >= (WORM_DISTANCE * 2 + 1) * 16 ||
+							positionInGrid.y + y < 0 || positionInGrid.y + y >= MIN_HEIGHT) continue;
 
-					wormData[positionInGrid.x + x][positionInGrid.y + y][positionInGrid.z + z] = true;
+						wormData[positionInGrid.x + x][positionInGrid.y + y][positionInGrid.z + z] = true;
 
+					}
 				}
 			}
 		}

@@ -1,81 +1,23 @@
 #include "TerrainGenerator.h"
-/*
-//NOT IN USE ONLY FOR FIRST PROTOTYPE
-void TerrainGenerator::Generate(World& world)
-{
-	// Create and configure FastNoise object
-	FastNoiseLite noise;
-	noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
-	// Gather noise data
-	//basically we create an array of the size of the world and 
-	//fill that with a value from the noise object multipied by a constant height multiplicator 
-	//since the noise is from -1 to 1 I scale it to 0 to 1
-	
-	for (int x = 0; x < XSIZE; x++)
-	{
-		for (int z = 0; z < ZSIZE; z++)
-		{
-			heightData[x][z] = round((noise.GetNoise((float)x * NOISE_XMUL, (float)z * NOISE_ZMUL) * 0.5f + 0.5f)*HEIGHT);
-		}
-	}
-	//add cubes to world
-	int cubeCount = 0;
-	for (int z = 0; z < XSIZE; z++)
-	{
-		for (int x = 0; x < ZSIZE; x++)
-		{
-			//check for minheight of this position taking neighbors into account, to prevent holes
-			int minHeight = heightData[x][z];
-			if ( x < XSIZE - 1 && minHeight - 1 > heightData[x + 1][z]) minHeight = heightData[x + 1][z];
-			if ( x > 0 && minHeight - 1 > heightData[x - 1][z]) minHeight = heightData[x - 1][z];
-			if ( z < ZSIZE - 1 && minHeight - 1 > heightData[x][z + 1]) minHeight = heightData[x][z + 1];
-			if ( z > 0 && minHeight - 1 > heightData[x][z - 1]) minHeight = heightData[x][z - 1];
-			//start from minHeight, to prevent additional blocks, that are not visible from the top
-			for (int y = minHeight; y <= heightData[x][z]; y++) {
-				Cube* cube = new Cube(x - XSIZE / 2.0f, y, z - ZSIZE / 2.0f);
-				world.dirtCubes.push_back(cube);
-			}
-		}
-	}
-	//GenerateWrongWorlds(world);
-}
-//NOT IN USE ONLY FOR PRESENTATION PURPOSES
-void TerrainGenerator::GenerateWrongWorlds(World& world)
-{
-	//full spawn
-	for (int z = 0; z < XSIZE; z++)
-	{
-		for (int x = 0; x < ZSIZE; x++)
-		{
-			for (int y = 0; y <= heightData[x][z]; y++) {
-				Cube* cube = new Cube(XSIZE + 3 + x - XSIZE / 2.0f, y, z - ZSIZE / 2.0f);
-				world.dirtCubes.push_back(cube);
-			}
-		}
-	}
 
-	//only top layer
-	for (int z = 0; z < XSIZE; z++)
-	{
-		for (int x = 0; x < ZSIZE; x++)
-		{
-			Cube* cube = new Cube(-XSIZE - 3 + x - XSIZE / 2.0f, heightData[x][z], z - ZSIZE / 2.0f);
-			world.dirtCubes.push_back(cube);
-		}
-	}
+TerrainGenerator::TerrainGenerator()
+{
+	noise.SetSeed(0);
+	noise.SetFractalOctaves(2);
+	noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+	wormNoise.SetSeed(0*3);
+	wormNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+
+
+	worms.push_back(new PerlinWorm(Vector3(), 1000, 5));
 }
-*/
+
 Chunk* TerrainGenerator::GenerateChunk(int gridPosX, int gridPosZ)
 {
 	Chunk* newChunk = new Chunk();
 	newChunk->gridPosX = gridPosX;
 	newChunk->gridPosZ = gridPosZ;
 	//create noise object
-	FastNoiseLite noise;
-	noise.SetSeed(222);
-	noise.SetFractalOctaves(2);
-	//noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
-	noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
 
 	for (int x = 0; x < 16; x++)
 	{
@@ -112,17 +54,18 @@ Chunk* TerrainGenerator::GenerateChunk(int gridPosX, int gridPosZ)
 	return newChunk;
 }
 
-void TerrainGenerator::GenerateWorms()
+void TerrainGenerator::CheckForWorm(int gridX, int gridZ)
 {
-	for (int i = 0; i < wormAmount; i++)
-	{
-		worms.push_back(new PerlinWorm(Vector3(rand()%100, 0, rand()%100), 1000));
+	float value = wormNoise.GetNoise((float)gridX, (float)gridZ);
+	if (value > 0.9f) {
+		int wormAmount = (wormNoise.GetNoise((float)gridX * gridZ, 0.0f) * 0.5f + 0.5f) * 4 + 1;
+		worms.push_back(new PerlinWorm(Vector3(gridX * 16, 0, gridZ * 16), 1000, wormAmount));
 	}
 }
 
 bool TerrainGenerator::IsCaveAt(Vector3 position)
 {
-	for (int i = 0; i < wormAmount; i++)
+	for (int i = 0; i < worms.size(); i++)
 	{
 		if (worms[i]->IsCaveAt(position)) return true;
 	}

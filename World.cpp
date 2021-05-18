@@ -143,7 +143,6 @@ World::World()
 	textureManager.LoadTextures();
 
 	skybox = new Skybox(10.0f);
-	terrainGenerator.GenerateWorms();
 
 	cloudGen.GenerateClouds();
 	cloudGen.FillCloudArrays(cloudVertices, cloudIndices);
