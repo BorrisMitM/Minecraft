@@ -1,8 +1,8 @@
 #include "Cloud.h"
 #include "FastNoiseLite.h"
 
-#define NOISE_XMUL 5.17f // defines the used section of our perlin noise, higher numbers -> higher frequency of hills
-#define NOISE_ZMUL 5.17f
+#define NOISE_XMUL 4.17f // defines the used section of our perlin noise, higher numbers -> higher frequency of hills
+#define NOISE_ZMUL 4.17f
 
 Cloud::Cloud()
 {
@@ -42,7 +42,7 @@ void Cloud::GenerateClouds()
 	}
 }
 
-void Cloud::Update()
+void Cloud::Update(float deltaTime)
 {
 	//move clouds etc
 }

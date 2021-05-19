@@ -69,8 +69,8 @@ void TextureManager::LoadTextures()
 
 	delete(pCloudBitmap);
 	CBitmap* pSkyboxBitmap = new CBitmap();
-	//cloud
-	pSkyboxBitmap->LoadFromFile("skybox.jpg");
+	//Skybox
+	pSkyboxBitmap->LoadFromFile("skyboxNew.png");
 
 	glGenTextures(1, &skyboxTexture);
 	glBindTexture(GL_TEXTURE_2D, skyboxTexture);

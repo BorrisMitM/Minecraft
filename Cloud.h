@@ -15,7 +15,7 @@ public:
 	~Cloud();
 
 	void GenerateClouds();
-	void Update();
+	void Update(float deltaTime);
 	void FillCloudArrays(std::vector<Cube::Vertex>& arrayOfDirtVertices, std::vector<unsigned int>& arrayOfDirtIndices);
 };
 
