@@ -78,9 +78,9 @@ void Chunk::SetTransparency()
 	{
 		for (int z = 0; z < 16; z++)
 		{
-			for (int y = heightMap[x][z] - DIRT_THICKNESS - 5; y < heightMap[x][z] - DIRT_THICKNESS; y++)
+			for (int y = MIN_HEIGHT; y <= WATER_LEVEL; y++)
 			{
-				if (cubes[x][y][z] != NULL) cubes[x][y][z]->SetTransparency(true);
+				if (cubes[x][y][z] != NULL && cubes[x][y][z]->type == Cube::BlockType::Water) cubes[x][y][z]->SetTransparency(true);
 			}
 		}
 	}
@@ -145,7 +145,7 @@ void Chunk::FillStoneArrays()
 	{
 		for (int z = 0; z < 16; z++)
 		{
-			for (int y = 0; y < heightMap[x][z] - DIRT_THICKNESS - 5; y++)
+			for (int y = 0; y < heightMap[x][z] - DIRT_THICKNESS; y++)
 			{
 				if (cubes[x][y][z] != NULL) {
 					cubes[x][y][z]->type = Cube::BlockType::Stone;
@@ -163,10 +163,9 @@ void Chunk::FillWaterArrays()
 	{
 		for (int z = 0; z < 16; z++)
 		{
-			for (int y = heightMap[x][z] - DIRT_THICKNESS - 5; y < heightMap[x][z] - DIRT_THICKNESS; y++)
+			for (int y = MIN_HEIGHT; y <= WATER_LEVEL; y++)
 			{
-				if (cubes[x][y][z] != NULL) {
-					cubes[x][y][z]->type = Cube::BlockType::Water;
+				if (cubes[x][y][z]->type == Cube::BlockType::Water) {
 					SetVisibility(x, y, z);
 					cubes[x][y][z]->AddToBufferArrays(vertices, indices);
 				}

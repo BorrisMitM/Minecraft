@@ -48,8 +48,18 @@ Chunk* TerrainGenerator::GenerateChunk(int gridPosX, int gridPosZ)
 					cube->chunk = newChunk;
 				}
 			}
+
+			// fill lower crates with water
+			for (int y = height; y <= WATER_LEVEL ; y++) {
+				Cube* cube = new Cube(gridPosX * 16 + x, y, gridPosZ * 16 + z);
+				newChunk->cubes[x][y][z] = cube;
+				cube->chunk = newChunk;
+				cube->type = Cube::BlockType::Water;
+			}
 		}
 	}
+
+
 	//generate caves
 	return newChunk;
 }
