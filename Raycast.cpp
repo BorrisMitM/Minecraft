@@ -116,58 +116,58 @@ bool Raycast::CylinderCast(Vector3 startPos, float upExtend, float downExtend, f
 	int ybottom = startPos.y - downExtend;
 	int ytop = startPos.y + upExtend;
 	//horizontal collision
-	for (int y = ybottom; y <= ytop; y++) {
-		for (int x = startPosIndex.x - 1; x <= startPosIndex.x + 1; x++) {
-			for (int z = startPosIndex.z - 1; z <= startPosIndex.z + 1; z++) {
-				if (z == startPosIndex.z && x == startPosIndex.x) continue;
-				Cube* cube = GetRelativeCube(x, y, z, world.currentChunk);
-				if (cube != NULL) {
-					int xOffset = x == startPosIndex.x - 1 ?  1 : 0;
-					int zOffset = z == startPosIndex.z + 1 ? -1 : 0;
-					Vector3 cubeVertexPosition = cube->position;
-					cubeVertexPosition.x += xOffset;
-					cubeVertexPosition.z += zOffset;
-					//zdirection
-					if (z == startPosIndex.z) {
-						//zdirection
-						float distance = abs(startPos.x - cubeVertexPosition.x);
-						if (distance < radius) {
-							CollisionInfo colInfo;
-							colInfo.cube = cube;
-							colInfo.normal = Vector3(startPosIndex.x - x, 0, 0);
-							colInfo.point = Vector3(cubeVertexPosition.x, cubeVertexPosition.y, startPos.z);
-							collisionInfo.push_back(colInfo);
-						}
-					} else if (x == startPosIndex.x) {
-						//xdirection
-						float distance = abs(startPos.z - cubeVertexPosition.z);
-						if (distance < radius) {
-							CollisionInfo colInfo;
-							colInfo.cube = cube;
-							colInfo.normal = Vector3(0, 0, startPosIndex.z - z);
-							colInfo.point = Vector3(startPos.x, cubeVertexPosition.y, cubeVertexPosition.z);
-							collisionInfo.push_back(colInfo);
-						}
-					}
-					else {
-						//diagonal
-						float zDistance = startPos.z - cubeVertexPosition.z;
-						float xDistance = startPos.x - cubeVertexPosition.x;
-						float distanceSqrd = xDistance * xDistance + zDistance * zDistance;
-						if (distanceSqrd < radiusSqrd) {
-							CollisionInfo colInfo;
-							colInfo.cube = cube;
-							colInfo.normal = startPos - cubeVertexPosition;
-							colInfo.normal.y = 0;
-							colInfo.normal.Normalize(); 
-							colInfo.point = cubeVertexPosition;
-							collisionInfo.push_back(colInfo);
-						}
-					}
-				}
-			}
-		}
-	}
+	//for (int y = ybottom; y <= ytop; y++) {
+	//	for (int x = startPosIndex.x - 1; x <= startPosIndex.x + 1; x++) {
+	//		for (int z = startPosIndex.z - 1; z <= startPosIndex.z + 1; z++) {
+	//			if (z == startPosIndex.z && x == startPosIndex.x) continue;
+	//			Cube* cube = GetRelativeCube(x, y, z, world.currentChunk);
+	//			if (cube != NULL) {
+	//				int xOffset = x == startPosIndex.x - 1 ?  1 : 0;
+	//				int zOffset = z == startPosIndex.z + 1 ? -1 : 0;
+	//				Vector3 cubeVertexPosition = cube->position;
+	//				cubeVertexPosition.x += xOffset;
+	//				cubeVertexPosition.z += zOffset;
+	//				//zdirection
+	//				if (z == startPosIndex.z) {
+	//					//zdirection
+	//					float distance = abs(startPos.x - cubeVertexPosition.x);
+	//					if (distance < radius) {
+	//						CollisionInfo colInfo;
+	//						colInfo.cube = cube;
+	//						colInfo.normal = Vector3(startPosIndex.x - x, 0, 0);
+	//						colInfo.point = Vector3(cubeVertexPosition.x, cubeVertexPosition.y, startPos.z);
+	//						collisionInfo.push_back(colInfo);
+	//					}
+	//				} else if (x == startPosIndex.x) {
+	//					//xdirection
+	//					float distance = abs(startPos.z - cubeVertexPosition.z);
+	//					if (distance < radius) {
+	//						CollisionInfo colInfo;
+	//						colInfo.cube = cube;
+	//						colInfo.normal = Vector3(0, 0, startPosIndex.z - z);
+	//						colInfo.point = Vector3(startPos.x, cubeVertexPosition.y, cubeVertexPosition.z);
+	//						collisionInfo.push_back(colInfo);
+	//					}
+	//				}
+	//				else {
+	//					//diagonal
+	//					float zDistance = startPos.z - cubeVertexPosition.z;
+	//					float xDistance = startPos.x - cubeVertexPosition.x;
+	//					float distanceSqrd = xDistance * xDistance + zDistance * zDistance;
+	//					if (distanceSqrd < radiusSqrd) {
+	//						CollisionInfo colInfo;
+	//						colInfo.cube = cube;
+	//						colInfo.normal = startPos - cubeVertexPosition;
+	//						colInfo.normal.y = 0;
+	//						colInfo.normal.Normalize(); 
+	//						colInfo.point = cubeVertexPosition;
+	//						collisionInfo.push_back(colInfo);
+	//					}
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
 	//bottom collision
 	for (int x = startPosIndex.x - 1; x <= startPosIndex.x + 1; x++) {
 		for (int z = startPosIndex.z - 1; z <= startPosIndex.z + 1; z++) {
@@ -184,29 +184,29 @@ bool Raycast::CylinderCast(Vector3 startPos, float upExtend, float downExtend, f
 				if (z == startPosIndex.z && x == startPosIndex.x) {
 					colliding = true;
 				}
-				else if (z == startPosIndex.z) {
-					//zdirection
-					float distance = abs(startPos.x - cubeVertexPosition.x);
-					if (distance < radius) {
-						colliding = true;
-					}
-				}
-				else if (x == startPosIndex.x) {
-					//xdirection
-					float distance = abs(startPos.z - cubeVertexPosition.z);
-					if (distance < radius) {
-						colliding = true;
-					}
-				}
-				else {
-					//diagonal
-					float zDistance = startPos.z - cubeVertexPosition.z;
-					float xDistance = startPos.x - cubeVertexPosition.x;
-					float distanceSqrd = xDistance * xDistance + zDistance * zDistance;
-					if (distanceSqrd < radiusSqrd) {
-						colliding = true;
-					}
-				}
+				//else if (z == startPosIndex.z) {
+				//	//zdirection
+				//	float distance = abs(startPos.x - cubeVertexPosition.x);
+				//	if (distance < radius) {
+				//		colliding = true;
+				//	}
+				//}
+				//else if (x == startPosIndex.x) {
+				//	//xdirection
+				//	float distance = abs(startPos.z - cubeVertexPosition.z);
+				//	if (distance < radius) {
+				//		colliding = true;
+				//	}
+				//}
+				//else {
+				//	//diagonal
+				//	float zDistance = startPos.z - cubeVertexPosition.z;
+				//	float xDistance = startPos.x - cubeVertexPosition.x;
+				//	float distanceSqrd = xDistance * xDistance + zDistance * zDistance;
+				//	if (distanceSqrd < radiusSqrd) {
+				//		colliding = true;
+				//	}
+				//}
 				if (colliding) {
 					CollisionInfo colInfo;
 					colInfo.cube = cube;
@@ -218,53 +218,53 @@ bool Raycast::CylinderCast(Vector3 startPos, float upExtend, float downExtend, f
 		}
 	}
 	//top collision
-	for (int x = startPosIndex.x - 1; x <= startPosIndex.x + 1; x++) {
-		for (int z = startPosIndex.z - 1; z <= startPosIndex.z + 1; z++) {
-			Cube* cube = GetRelativeCube(x, ytop, z, world.currentChunk);
-			if (cube != NULL) {
-				int xOffset = x == startPosIndex.x - 1 ? 1 : 0;
-				int zOffset = z == startPosIndex.z + 1 ? -1 : 0;
-				Vector3 cubeVertexPosition = cube->position;
-				cubeVertexPosition.x += xOffset;
-				cubeVertexPosition.z += zOffset;
-				bool colliding = false;
-				//zdirection
-				if (z == startPosIndex.z && x == startPosIndex.x) {
-					colliding = true;
-				}
-				else if (z == startPosIndex.z) {
-					//zdirection
-					float distance = abs(startPos.x - cubeVertexPosition.x);
-					if (distance < radius) {
-						colliding = true;
-					}
-				}
-				else if (x == startPosIndex.x) {
-					//xdirection
-					float distance = abs(startPos.z - cubeVertexPosition.z);
-					if (distance < radius) {
-						colliding = true;
-					}
-				}
-				else {
-					//diagonal
-					float zDistance = startPos.z - cubeVertexPosition.z;
-					float xDistance = startPos.x - cubeVertexPosition.x;
-					float distanceSqrd = xDistance * xDistance + zDistance * zDistance;
-					if (distanceSqrd < radiusSqrd) {
-						colliding = true;
-					}
-				}
-				if (colliding) {
-					CollisionInfo colInfo;
-					colInfo.cube = cube;
-					colInfo.normal = Vector3(0, -1, 0);
-					colInfo.point = Vector3(startPos.x, cubeVertexPosition.y, startPos.z);
-					collisionInfo.push_back(colInfo);
-				}
-			}
-		}
-	}
+	//for (int x = startPosIndex.x - 1; x <= startPosIndex.x + 1; x++) {
+	//	for (int z = startPosIndex.z - 1; z <= startPosIndex.z + 1; z++) {
+	//		Cube* cube = GetRelativeCube(x, ytop, z, world.currentChunk);
+	//		if (cube != NULL) {
+	//			int xOffset = x == startPosIndex.x - 1 ? 1 : 0;
+	//			int zOffset = z == startPosIndex.z + 1 ? -1 : 0;
+	//			Vector3 cubeVertexPosition = cube->position;
+	//			cubeVertexPosition.x += xOffset;
+	//			cubeVertexPosition.z += zOffset;
+	//			bool colliding = false;
+	//			//zdirection
+	//			if (z == startPosIndex.z && x == startPosIndex.x) {
+	//				colliding = true;
+	//			}
+	//			else if (z == startPosIndex.z) {
+	//				//zdirection
+	//				float distance = abs(startPos.x - cubeVertexPosition.x);
+	//				if (distance < radius) {
+	//					colliding = true;
+	//				}
+	//			}
+	//			else if (x == startPosIndex.x) {
+	//				//xdirection
+	//				float distance = abs(startPos.z - cubeVertexPosition.z);
+	//				if (distance < radius) {
+	//					colliding = true;
+	//				}
+	//			}
+	//			else {
+	//				//diagonal
+	//				float zDistance = startPos.z - cubeVertexPosition.z;
+	//				float xDistance = startPos.x - cubeVertexPosition.x;
+	//				float distanceSqrd = xDistance * xDistance + zDistance * zDistance;
+	//				if (distanceSqrd < radiusSqrd) {
+	//					colliding = true;
+	//				}
+	//			}
+	//			if (colliding) {
+	//				CollisionInfo colInfo;
+	//				colInfo.cube = cube;
+	//				colInfo.normal = Vector3(0, -1, 0);
+	//				colInfo.point = Vector3(startPos.x, cubeVertexPosition.y, startPos.z);
+	//				collisionInfo.push_back(colInfo);
+	//			}
+	//		}
+	//	}
+	//}
 	return collisionInfo.size() > 0;
 }
 

@@ -115,12 +115,20 @@ void CameraController::Update(float dt, World &world)
 		
 		Vector3 up(0, 1, 0);
 
-		for (int i = 0; i < collisionInfo.size(); i++) {
+		/*for (int i = 0; i < collisionInfo.size(); i++) {
 			if (collisionInfo[i].normal == up) {
 				isGrounded = true;
 				velocity.y = 0;
 				break;
 			}
+		}*/
+		int x = position.x - world.currentChunk->gridPosX * 16;
+		int z = position.z - world.currentChunk->gridPosZ * 16;
+		//Cube* cuby = Raycast::GetRelativeCube(x, position.y - 1, z , world.currentChunk);
+		Cube* cuby = world.currentChunk->cubes[x][(int)position.y - 1][z];
+		if (cuby != NULL) {
+			isGrounded = true;
+			velocity.y = 0;
 		}
 	}
 	
