@@ -165,7 +165,7 @@ void Chunk::FillWaterArrays()
 		{
 			for (int y = MIN_HEIGHT; y <= WATER_LEVEL; y++)
 			{
-				if (cubes[x][y][z]->type == Cube::BlockType::Water) {
+				if (cubes[x][y][z] != NULL && cubes[x][y][z]->type == Cube::BlockType::Water) {
 					SetVisibility(x, y, z);
 					cubes[x][y][z]->AddToBufferArrays(vertices, indices);
 				}
