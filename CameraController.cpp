@@ -125,7 +125,7 @@ void CameraController::Update(float dt, World &world)
 		int x = position.x - world.currentChunk->gridPosX * 16;
 		int z = position.z - world.currentChunk->gridPosZ * 16;
 		//Cube* cuby = Raycast::GetRelativeCube(x, position.y - 1, z , world.currentChunk);
-		Cube* cuby = world.currentChunk->cubes[x][(int)position.y - 1][z];
+		Cube* cuby = world.currentChunk->cubes[x][(int)position.y - 1][z+1];
 		if (cuby != NULL) {
 			isGrounded = true;
 			velocity.y = 0;
