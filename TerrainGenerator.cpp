@@ -26,6 +26,8 @@ Chunk* TerrainGenerator::GenerateChunk(int gridPosX, int gridPosZ)
 			//calculate height of the current position in the chunk
 			int height = round(Easing::EaseOut((noise.GetNoise((float)(x + gridPosX * 16) * NOISE_XMUL, 
 											   (float)(z + gridPosZ * 16) * NOISE_ZMUL) * 0.5f + 0.5f)) * NOISE_SCALE + MIN_HEIGHT);
+			//int height = round(Easing::EaseOut((std::abs(noise.GetNoise((float)(x + gridPosX * 16) * NOISE_XMUL,
+			//	(float)(z + gridPosZ * 16) * NOISE_ZMUL) * 1.0f + 0.3f))) * NOISE_SCALE * 0.7f + MIN_HEIGHT);
 			newChunk->heightMap[x][z] = height;
 			//fill position with dirt cubes till height is reached
 			for (int i = 0; i <= height; i++) {

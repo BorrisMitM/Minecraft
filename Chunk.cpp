@@ -3,8 +3,19 @@
 #define BUFFER_OFFSET(i) ((void*)(i))
 void Chunk::SetVisibility(int x, int y, int z)
 {
-	bool isVisible = true;
 	if (cubes[x][y][z] == NULL) return;
+
+	if (cubes[x][y][z]->type == Cube::BlockType::Water) {
+		cubes[x][y][z]->SetVisibilty(0, false);
+		cubes[x][y][z]->SetVisibilty(1, false);
+		cubes[x][y][z]->SetVisibilty(2, false);
+		cubes[x][y][z]->SetVisibilty(3, false);
+		cubes[x][y][z]->SetVisibilty(4, true);
+		cubes[x][y][z]->SetVisibilty(5, true);
+		return;
+	}
+
+	bool isVisible = true;
 	if (x > 0) {
 		isVisible = cubes[x - 1][y][z] == NULL || cubes[x - 1][y][z]->GetTransparency();
 		cubes[x][y][z]->SetVisibilty(3, isVisible);
@@ -94,7 +105,6 @@ void Chunk::CreateAndFillBuffer()
 	FillDirtArrays();
 	FillGrassArrays();
 	FillStoneArrays();
-	FillWaterArrays();
 
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -103,6 +113,19 @@ void Chunk::CreateAndFillBuffer()
 	glGenBuffers(1, &ibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), &indices.front(), GL_DYNAMIC_DRAW);
+
+
+	FillWaterArrays();
+
+	if (waterVertices.size() > 0) {
+		glGenBuffers(1, &waterVbo);
+		glBindBuffer(GL_ARRAY_BUFFER, waterVbo);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Cube::Vertex) * waterVertices.size(), &waterVertices[0].x, GL_DYNAMIC_DRAW);
+
+		glGenBuffers(1, &waterIbo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, waterIbo);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * waterIndices.size(), &waterIndices.front(), GL_DYNAMIC_DRAW);
+	}
 }
 
 
@@ -167,7 +190,7 @@ void Chunk::FillWaterArrays()
 			{
 				if (cubes[x][y][z] != NULL && cubes[x][y][z]->type == Cube::BlockType::Water) {
 					SetVisibility(x, y, z);
-					cubes[x][y][z]->AddToBufferArrays(vertices, indices);
+					cubes[x][y][z]->AddToBufferArrays(waterVertices, waterIndices);
 				}
 			}
 		}
@@ -190,6 +213,22 @@ void Chunk::Render()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0);
+}
+
+void Chunk::RenderWater() {
+	glBindBuffer(GL_ARRAY_BUFFER, waterVbo);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, sizeof(Cube::Vertex), BUFFER_OFFSET(0)); // The starting point of the VBO, for the vertices
+
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glNormalPointer(GL_FLOAT, sizeof(Cube::Vertex), BUFFER_OFFSET(12)); // The starting point of normals, 12 bytes away
+
+	glClientActiveTexture(GL_TEXTURE0);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glTexCoordPointer(2, GL_FLOAT, sizeof(Cube::Vertex), BUFFER_OFFSET(24)); // The starting point of texcoords, 24 bytes away
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, waterIbo);
+
+	glDrawElements(GL_TRIANGLES, waterIndices.size(), GL_UNSIGNED_INT, (void*)0);
 }
 
 Chunk::~Chunk()

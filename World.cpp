@@ -100,6 +100,9 @@ void World::RenderWorld()
 	for (int i = 0; i < chunks.size(); i++) {
 		chunks[i]->Render();
 	}
+	for (int i = 0; i < chunks.size(); i++) {
+		chunks[i]->RenderWater();
+	}
 	BindBuffer(vboCloud, iboCloud, textureManager.cloudTexture);
 	glDrawElements(GL_TRIANGLES, cloudIndices.size(), GL_UNSIGNED_INT, (void*)0);
 }
