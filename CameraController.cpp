@@ -100,18 +100,18 @@ void CameraController::Update(float dt, World &world)
 {
 	// apply gravity to y
 	velocity.y -= gravity * dt;
-	if (velocity.y * dt >= 0.9) {
+	if (velocity.y * dt >= 0.5) {
 		velocity.y = 0.9 / dt;
 	}
 
 	// raycast capsule
 	vector<Raycast::CollisionInfo> collisionInfo;
-	bool collided = Raycast::CylinderCast(position + velocity * dt, 0.5f, 0.7f, 0.4f, world, collisionInfo);
+	bool collided = Raycast::CylinderCast(position + velocity * dt, 0.5f, 0.7f, 0.3f, world, collisionInfo);
 
 	// check if grounded from raycast info
 	isGrounded = false;
 	if (collided) {
-		cout << "Collisions " << collisionInfo.size() << endl;
+		//cout << "Collisions " << collisionInfo.size() << endl;
 		
 		Vector3 up(0, 1, 0);
 
@@ -156,6 +156,6 @@ CameraController::CameraController()
 	pitch = 0.f;
 	yaw = 180.f;
 	roll = 0.f;
-	velocityMagnitude = 50.f;
+	velocityMagnitude = 200.f;
 	turnSpeed = 2.f;
 }

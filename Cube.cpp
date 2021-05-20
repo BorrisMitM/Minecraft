@@ -2,6 +2,7 @@
 #include "Chunk.h"
 #include "Vector3i.h"
 const Cube::Vertex Cube::vertexTemplate[36] = {
+	// vertices		normals		uvs
 	{0.0,0.0,0.0 ,0.0,0.0,1.0 ,0.0,0.33}, // front	
 	{1.0,0.0,0.0 ,0.0,0.0,1.0 ,0.0,0.66},
 	{0.0,1.0,0.0 ,0.0,0.0,1.0 ,0.25,0.33},
