@@ -11,7 +11,7 @@ bool Raycast::IntersectPoint(Vector3 rayVector, Vector3 rayPoint, Vector3 planeN
 }
 Cube* Raycast::Cast(Vector3 startPos, Vector3 dir, int distance, World& world)
 {
-	Vector3 offset = Vector3(.5f, .5f, -.5f);
+	Vector3 offset = Vector3(.5f, .5f, .5f);
 	vector<Cube*> cubes;
 	Vector3i startPosIndex(startPos.x, startPos.y, startPos.z);
 	startPosIndex.x = startPosIndex.x - world.currentChunk->gridPosX * 16;
@@ -38,7 +38,7 @@ Cube* Raycast::Cast(Vector3 startPos, Vector3 dir, int distance, World& world)
 			Vector3 intersectionPoint(0,0,0);
 			if (IntersectPoint(dir, startPos, Vector3(0, 1, 0), cubes[i]->position + Vector3(0, 1, 0), intersectionPoint)) {
 				if (intersectionPoint.x >= cubes[i]->position.x && intersectionPoint.x < cubes[i]->position.x + 1.0f &&
-					intersectionPoint.z <= cubes[i]->position.z && intersectionPoint.z > cubes[i]->position.z - 1.0f)
+					intersectionPoint.z >= cubes[i]->position.z && intersectionPoint.z < cubes[i]->position.z + 1.0f)
 					hitCubes.push_back(cubes[i]);
   			}
 		}
@@ -47,7 +47,7 @@ Cube* Raycast::Cast(Vector3 startPos, Vector3 dir, int distance, World& world)
 			Vector3 intersectionPoint(0, 0, 0);
 			if (IntersectPoint(dir, startPos, Vector3(0, -1, 0), cubes[i]->position, intersectionPoint)) {
 				if (intersectionPoint.x >= cubes[i]->position.x && intersectionPoint.x < cubes[i]->position.x + 1.0f &&
-					intersectionPoint.z <= cubes[i]->position.z && intersectionPoint.z > cubes[i]->position.z - 1.0f)
+					intersectionPoint.z >= cubes[i]->position.z && intersectionPoint.z < cubes[i]->position.z + 1.0f)
 					hitCubes.push_back(cubes[i]);
 			}
 		}
@@ -56,7 +56,7 @@ Cube* Raycast::Cast(Vector3 startPos, Vector3 dir, int distance, World& world)
 			Vector3 intersectionPoint(0, 0, 0);
 			if (IntersectPoint(dir, startPos, Vector3(-1, 0, 0), cubes[i]->position, intersectionPoint)) {
 				if (intersectionPoint.y >= cubes[i]->position.y && intersectionPoint.y < cubes[i]->position.y + 1.0f &&
-					intersectionPoint.z <= cubes[i]->position.z && intersectionPoint.z > cubes[i]->position.z - 1.0f)
+					intersectionPoint.z >= cubes[i]->position.z && intersectionPoint.z < cubes[i]->position.z + 1.0f)
 					hitCubes.push_back(cubes[i]);
 			}
 		}
@@ -65,14 +65,14 @@ Cube* Raycast::Cast(Vector3 startPos, Vector3 dir, int distance, World& world)
 			Vector3 intersectionPoint(0, 0, 0);
 			if (IntersectPoint(dir, startPos, Vector3(1, 0, 0), cubes[i]->position + Vector3(1, 0, 0), intersectionPoint)) {
 				if (intersectionPoint.y >= cubes[i]->position.y && intersectionPoint.y < cubes[i]->position.y + 1.0f &&
-					intersectionPoint.z <= cubes[i]->position.z && intersectionPoint.z > cubes[i]->position.z - 1.0f)
+					intersectionPoint.z >= cubes[i]->position.z && intersectionPoint.z < cubes[i]->position.z + 1.0f)
 					hitCubes.push_back(cubes[i]);
 			}
 		}
 		//for the front side
 		if (cubes[i]->position.z < startPos.z) {
 			Vector3 intersectionPoint(0, 0, 0);
-			if (IntersectPoint(dir, startPos, Vector3(0, 0, 1), cubes[i]->position, intersectionPoint)) {
+			if (IntersectPoint(dir, startPos, Vector3(0, 0, 1), cubes[i]->position + Vector3(0, 0, 1), intersectionPoint)) {
 				if (intersectionPoint.y >= cubes[i]->position.y && intersectionPoint.y < cubes[i]->position.y + 1.0f &&
 					intersectionPoint.x >= cubes[i]->position.x && intersectionPoint.x < cubes[i]->position.x + 1.0f)
 					hitCubes.push_back(cubes[i]);
@@ -81,7 +81,7 @@ Cube* Raycast::Cast(Vector3 startPos, Vector3 dir, int distance, World& world)
 		//for the back side
 		if (cubes[i]->position.z - 1.0f > startPos.z) {
 			Vector3 intersectionPoint(0, 0, 0);
-			if (IntersectPoint(dir, startPos, Vector3(0, 0, -1), cubes[i]->position + Vector3(0, 0, -1), intersectionPoint)) {
+			if (IntersectPoint(dir, startPos, Vector3(0, 0, -1), cubes[i]->position, intersectionPoint)) {
 				if (intersectionPoint.y >= cubes[i]->position.y && intersectionPoint.y < cubes[i]->position.y + 1.0f &&
 					intersectionPoint.x >= cubes[i]->position.x && intersectionPoint.x < cubes[i]->position.x + 1.0f)
 					hitCubes.push_back(cubes[i]);

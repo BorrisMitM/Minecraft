@@ -22,7 +22,7 @@ void World::Update(float dt)
 
 	Vector3 chunkOriginWorldPosition = Vector3(currentChunk->gridPosX * 16, 0, currentChunk->gridPosZ * 16);
 	if (playerPosition.x < chunkOriginWorldPosition.x 
-		|| playerPosition.z < chunkOriginWorldPosition.z 
+		|| playerPosition.z  < chunkOriginWorldPosition.z 
 		|| playerPosition.x >= chunkOriginWorldPosition.x + 16 
 		|| playerPosition.z >= chunkOriginWorldPosition.z + 16)
 	{
