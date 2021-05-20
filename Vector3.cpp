@@ -53,6 +53,17 @@ Vector3 Vector3::operator * (float const& v)
 	return temp;
 }
 
+bool Vector3::operator==(Vector3 const& v)
+{
+	float error = 0.01;
+	if (abs(this->x - v.x) > error || abs(this->y - v.y) > error || abs(this->z - v.z) > error) {
+		return false;
+	}
+	else {
+		return true;
+	}
+}
+
 Vector3 Vector3::cross(const Vector3& v2) {
 	Vector3 cross(
 		(this->y * v2.z - this->z * v2.y),

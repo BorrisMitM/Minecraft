@@ -13,26 +13,54 @@ void CameraController::Setup(GLWindow* window)
 void CameraController::HandleInput(float dt, World& world)
 { 
 
-	SHORT key = ::GetAsyncKeyState(0x57) & 0x8000;//W
-	if (key != 0) position += forward * velocityMagnitude * dt;
+	if (isFlying) {
+		SHORT key = ::GetAsyncKeyState(0x57) & 0x8000;//W
+		if (key != 0) position += forward * velocityMagnitude * dt;
 
-	key = ::GetAsyncKeyState(0x53) & 0x8000;//S
-	if (key != 0) position -= forward * velocityMagnitude * dt;
+		key = ::GetAsyncKeyState(0x53) & 0x8000;//S
+		if (key != 0) position -= forward * velocityMagnitude * dt;
 	
-	key = ::GetAsyncKeyState(0x44) & 0x8000;//D
-	if (key != 0) position += side * velocityMagnitude * dt;
+		key = ::GetAsyncKeyState(0x44) & 0x8000;//D
+		if (key != 0) position += side * velocityMagnitude * dt;
 
-	key = ::GetAsyncKeyState(0x41) & 0x8000;//A
-	if (key != 0) position -= side * velocityMagnitude * dt;
-		
-	key = ::GetAsyncKeyState(0x45) & 0x8000;//E
-	if (key != 0) 
-		position += up * velocityMagnitude * dt;
-
-	key = ::GetAsyncKeyState(0x51) & 0x8000;//Q
-	if (key != 0) 
-		position -= up * velocityMagnitude * dt;
+		key = ::GetAsyncKeyState(0x41) & 0x8000;//A
+		if (key != 0) position -= side * velocityMagnitude * dt;
 	
+
+		key = ::GetAsyncKeyState(0x45) & 0x8000;//E
+		if (key != 0)
+			position += up * velocityMagnitude * dt;
+
+		key = ::GetAsyncKeyState(0x51) & 0x8000;//Q
+		if (key != 0)
+			position -= up * velocityMagnitude * dt;
+	}
+	else {
+		Vector3 forwardXZ(forward.x, 0, forward.z);
+		forwardXZ.Normalize();
+
+		velocity.x = 0;
+		velocity.z = 0;
+
+		SHORT key = ::GetAsyncKeyState(0x57) & 0x8000;//W
+		if (key != 0) velocity += forwardXZ * velocityMagnitude * dt;
+
+		key = ::GetAsyncKeyState(0x53) & 0x8000;//S
+		if (key != 0) velocity -= forwardXZ * velocityMagnitude * dt;
+
+		key = ::GetAsyncKeyState(0x44) & 0x8000;//D
+		if (key != 0) velocity += side * velocityMagnitude * dt;
+
+		key = ::GetAsyncKeyState(0x41) & 0x8000;//A
+		if (key != 0) velocity -= side * velocityMagnitude * dt;
+
+		key = ::GetAsyncKeyState(0x20) & 0x8000;//Space bar
+		if (key != 0 && isGrounded) {
+			velocity.y = 10;
+			cout << "Space pressed" << endl;
+		}
+	}
+
 
 	double xpos, ypos;
 	glfwGetCursorPos(window->m_Window, &xpos, &ypos);
@@ -68,8 +96,38 @@ void CameraController::HandleInput(float dt, World& world)
 	
 }
 
-void CameraController::Update(float dt)
+void CameraController::Update(float dt, World &world)
 {
+	// apply gravity to y
+	velocity.y -= gravity * dt;
+	if (velocity.y * dt >= 0.9) {
+		velocity.y = 0.9 / dt;
+	}
+
+	// raycast capsule
+	vector<Raycast::CollisionInfo> collisionInfo;
+	bool collided = Raycast::CylinderCast(position + velocity * dt, 0.5f, 0.7f, 0.4f, world, collisionInfo);
+
+	// check if grounded from raycast info
+	isGrounded = false;
+	if (collided) {
+		cout << "Collisions " << collisionInfo.size() << endl;
+		
+		Vector3 up(0, 1, 0);
+
+		for (int i = 0; i < collisionInfo.size(); i++) {
+			if (collisionInfo[i].normal == up) {
+				isGrounded = true;
+				velocity.y = 0;
+				break;
+			}
+		}
+	}
+	
+	position += velocity * dt;
+
+
+	// Camera rotation
 	float cosPitch = cosf(pitch * 3.1415 / 180);
 	float cosYaw = cosf(yaw * 3.1415 / 180);
 	float cosRoll = cosf(roll * 3.1415 / 180);

@@ -15,6 +15,10 @@ class CameraController
 
 	GLWindow* window;
 
+	bool isFlying;
+	bool isGrounded;
+	float gravity = 9.81f;
+
 public:
 
 	Vector3 mousePos;
@@ -26,7 +30,7 @@ public:
 
 	void Setup(GLWindow* window);
 	void HandleInput(float dt, World& world);
-	void Update(float dt);
+	void Update(float dt, World& world);
 
 	CameraController();
 

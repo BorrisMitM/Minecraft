@@ -20,6 +20,7 @@ public:
 	Vector3& operator += (Vector3 const& v);
 	Vector3& operator -= (Vector3 const& v);
 	Vector3 operator * (float const& v);
+	bool operator == (Vector3 const& v);
 
 	Vector3 cross(const Vector3& v2);
 	float dot(const Vector3& v2);

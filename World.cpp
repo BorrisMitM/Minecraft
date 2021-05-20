@@ -11,7 +11,7 @@ void World::HandleInput(float dt)
 
 void World::Update(float dt)
 {
-	camera.Update(dt);
+	camera.Update(dt, *this);
 	skybox->SetPosition(camera.getPosition());
 
 
