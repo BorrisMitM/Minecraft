@@ -120,7 +120,7 @@ bool Raycast::CylinderCast(Vector3 startPos, float upExtend, float downExtend, f
 			for (int z = startPosIndex.z - 1; z <= startPosIndex.z + 1; z++) {
 				if (z == startPosIndex.z && x == startPosIndex.x) continue;
 				Cube* cube = GetRelativeCube(x, y, z, world.currentChunk);
-				if (cube != NULL) {
+				if (cube != NULL && cube->type != Cube::BlockType::Water) {
 					int xOffset = x == startPosIndex.x - 1 ?  1 : 0;
 					int zOffset = z == startPosIndex.z - 1 ?  1 : 0;
 					Vector3 cubeVertexPosition = cube->position;
@@ -180,7 +180,7 @@ bool Raycast::CylinderCast(Vector3 startPos, float upExtend, float downExtend, f
 	for (int x = startPosIndex.x - 1; x <= startPosIndex.x + 1; x++) {
 		for (int z = startPosIndex.z - 1; z <= startPosIndex.z + 1; z++) {
 			Cube* cube = GetRelativeCube(x, ybottom, z, world.currentChunk);
-			if (cube != NULL) {
+			if (cube != NULL && cube->type != Cube::BlockType::Water) {
 				int xOffset = x == startPosIndex.x - 1 ? 1 : 0;
 				int zOffset = z == startPosIndex.z - 1 ? 1 : 0;
 				Vector3 cubeVertexPosition = cube->position;
@@ -229,7 +229,7 @@ bool Raycast::CylinderCast(Vector3 startPos, float upExtend, float downExtend, f
 	for (int x = startPosIndex.x - 1; x <= startPosIndex.x + 1; x++) {
 		for (int z = startPosIndex.z - 1; z <= startPosIndex.z + 1; z++) {
 			Cube* cube = GetRelativeCube(x, ytop, z, world.currentChunk);
-			if (cube != NULL) {
+			if (cube != NULL && cube->type != Cube::BlockType::Water) {
 				int xOffset = x == startPosIndex.x - 1 ? 1 : 0;
 				int zOffset = z == startPosIndex.z + 1 ? -1 : 0;
 				Vector3 cubeVertexPosition = cube->position;

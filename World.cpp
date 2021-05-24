@@ -17,7 +17,6 @@ void World::Update(float dt)
 
 	//this can be commented in and out, later will be replaced for other player position
 	playerPosition = camera.getPosition();
-	playerPosition.Print();
 	//calculate if player is still in the current chunk
 	//a chunk has a grid position and reaches 16 units into x and z 
 
@@ -101,9 +100,12 @@ void World::RenderWorld()
 	for (int i = 0; i < chunks.size(); i++) {
 		chunks[i]->Render();
 	}
+	// we tried transparency artistic decision
+	glDisable(GL_CULL_FACE);
 	for (int i = 0; i < chunks.size(); i++) {
 		chunks[i]->RenderWater();
 	}
+	glEnable(GL_CULL_FACE);
 	BindBuffer(vboCloud, iboCloud, textureManager.cloudTexture);
 	glDrawElements(GL_TRIANGLES, cloudIndices.size(), GL_UNSIGNED_INT, (void*)0);
 }

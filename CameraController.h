@@ -18,7 +18,8 @@ class CameraController
 	bool isFlying;
 	bool isGrounded;
 	float gravity = 9.81f;
-
+	bool mousePressed = false;
+	bool isFlyingPressed = false;
 public:
 
 	Vector3 mousePos;

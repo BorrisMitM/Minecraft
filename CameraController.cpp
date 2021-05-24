@@ -56,11 +56,19 @@ void CameraController::HandleInput(float dt, World& world)
 
 		key = ::GetAsyncKeyState(0x20) & 0x8000;//Space bar
 		if (key != 0 && isGrounded) {
-			velocity.y = 10;
+			velocity.y = 5;
 			cout << "Space pressed" << endl;
 		}
 	}
-
+	SHORT key = ::GetAsyncKeyState(0x0D) & 0x8000;//Enter
+	if (key != 0) {
+		if (!isFlyingPressed) {
+			isFlyingPressed = true;
+			isFlying = !isFlying;
+			cout << "Flying: " << isFlying << endl;
+		}
+	}
+	else isFlyingPressed = false;
 
 	double xpos, ypos;
 	glfwGetCursorPos(window->m_Window, &xpos, &ypos);
@@ -88,68 +96,73 @@ void CameraController::HandleInput(float dt, World& world)
 	int mouseButton = glfwGetMouseButton(window->m_Window, 0);
 	
 	if (mouseButton == GLFW_PRESS) {
-		Cube* hitCube = Raycast::Cast(position, forward, 3, world);
-		if(hitCube != NULL)
-			hitCube->Delete();
+		if (!mousePressed) {
+			mousePressed = true;
+			Cube* hitCube = Raycast::Cast(position, forward, 3, world);
+			if (hitCube != NULL)
+				hitCube->Delete();
+		}
 	}
+	else mousePressed = false;
 
 	
 }
 
 void CameraController::Update(float dt, World &world)
 {
-	// apply gravity to y
-	velocity.y -= gravity * dt;
-	if (velocity.y * dt >= 0.5) {
-		velocity.y = 0.9 / dt;
-	}
+	if (!isFlying) {
+		// apply gravity to y
+		velocity.y -= gravity * dt;
+		if (velocity.y * dt >= 0.5) {
+			velocity.y = 0.9 / dt;
+		}
 
-	// raycast capsule
-	vector<Raycast::CollisionInfo> collisionInfo;
-	bool collided = Raycast::CylinderCast(position + velocity * dt, 0.5f, 0.7f, 0.3f, world, collisionInfo);
+		// raycast capsule
+		vector<Raycast::CollisionInfo> collisionInfo;
+		bool collided = Raycast::CylinderCast(position + velocity * dt, 0.2f, 1.4f, 0.3f, world, collisionInfo);
 
-	// check if grounded from raycast info
-	
-	isGrounded = false;
-	if (collided) {
-		//ground checking
-		int groundY = -1;
-		if (velocity.y <= 0) {
-			Vector3 up(0, 1, 0);
+		// check if grounded from raycast info
+
+		isGrounded = false;
+		if (collided) {
+			//ground checking
+			int groundY = -1;
+			if (velocity.y <= 0) {
+				Vector3 up(0, 1, 0);
+				for (int i = 0; i < collisionInfo.size(); i++)
+				{
+					if (collisionInfo[i].normal == up) {
+						isGrounded = true;
+						velocity.y = 0;
+						groundY = collisionInfo[i].cube->position.y;
+					}
+				}
+			}
+			//top checking
+			if (velocity.y > 0) {
+				Vector3 down(0, -1, 0);
+				for (int i = 0; i < collisionInfo.size(); i++)
+				{
+					if (collisionInfo[i].normal == down) {
+						velocity.y = 0;
+					}
+				}
+			}
+			//side checking
+
 			for (int i = 0; i < collisionInfo.size(); i++)
 			{
-				if (collisionInfo[i].normal == up) {
-					isGrounded = true;
-					velocity.y = 0; 
-					groundY = collisionInfo[i].cube->position.y;
+				if (collisionInfo[i].cube->position.y == groundY) continue;
+				if (collisionInfo[i].normal.x != 0) {
+					velocity.x = 0;
+				}
+				if (collisionInfo[i].normal.z != 0) {
+					velocity.z = 0;
 				}
 			}
 		}
-		//top checking
-		if (velocity.y > 0) {
-			Vector3 down(0, -1, 0);
-			for (int i = 0; i < collisionInfo.size(); i++)
-			{
-				if (collisionInfo[i].normal == down) {
-					velocity.y = 0;
-				}
-			}
-		}
-		//side checking
-
-		for (int i = 0; i < collisionInfo.size(); i++)
-		{
-			if (collisionInfo[i].cube->position.y == groundY) continue;
-			if (collisionInfo[i].normal.x != 0) {
-				velocity.x = 0;
-			}
-			if (collisionInfo[i].normal.z != 0) {
-				velocity.z = 0;
-			}
-		}
+		position += velocity * dt;
 	}
-	
-	position += velocity * dt;
 
 
 	// Camera rotation
