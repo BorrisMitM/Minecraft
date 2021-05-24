@@ -2,6 +2,7 @@
 #include "Vector3i.h"
 PerlinWorm::PerlinWorm(Vector3 position, float length, int wormAmount)
 {
+
 	startPosition = position;
 	startPosition.y = 0;
 	//create noise object
@@ -12,11 +13,10 @@ PerlinWorm::PerlinWorm(Vector3 position, float length, int wormAmount)
 	radiusNoise.SetSeed(rand());
 	radiusNoise.SetNoiseType(FastNoiseLite::NoiseType::NoiseType_Value);
 	int radius = round((radiusNoise.GetNoise(0.0f,0.0f)*0.5+0.5f)*3+1);
-	int yPosition = rand() % (MIN_HEIGHT - 10) + 10;
+	int yPosition = rand() % (MIN_HEIGHT - 20) + 20;
 	Vector3 currentDirection(0, 1, 0);
 	for (int i = 0; i < wormAmount; i++) {
-		Vector3 currentPosition = startPosition;
-		currentPosition.y = yPosition;
+		Vector3 currentPosition(0,yPosition,0);
 
 		float distance = 0;
 
@@ -57,7 +57,7 @@ PerlinWorm::PerlinWorm(Vector3 position, float length, int wormAmount)
 						if (positionInGrid.x + x < 0 || positionInGrid.x + x >= (WORM_DISTANCE * 2 + 1) * 16 ||
 							positionInGrid.z + z < 0 || positionInGrid.z + z >= (WORM_DISTANCE * 2 + 1) * 16 ||
 							positionInGrid.y + y < 0 || positionInGrid.y + y >= MIN_HEIGHT) continue;
-
+						//cout << "set data in worm" << endl;
 						wormData[positionInGrid.x + x][positionInGrid.y + y][positionInGrid.z + z] = true;
 
 					}
@@ -65,6 +65,8 @@ PerlinWorm::PerlinWorm(Vector3 position, float length, int wormAmount)
 			}
 		}
 	}
+	cout << "Created new Worm at ";
+	position.Print();
 }
 
 bool PerlinWorm::IsCaveAt(Vector3 worldPos)

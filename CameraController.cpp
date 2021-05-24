@@ -57,7 +57,6 @@ void CameraController::HandleInput(float dt, World& world)
 		key = ::GetAsyncKeyState(0x20) & 0x8000;//Space bar
 		if (key != 0 && isGrounded) {
 			velocity.y = 5;
-			cout << "Space pressed" << endl;
 		}
 	}
 	SHORT key = ::GetAsyncKeyState(0x0D) & 0x8000;//Enter

@@ -11,7 +11,7 @@
 
 float timeSinceStart= 0, oldTimeSinceStart = 0;
 float deltaTime;
-float maxDeltaTime = 0.05f;
+float maxDeltaTime = 0.02f;
 
 int main(void)
 {

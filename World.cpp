@@ -26,7 +26,7 @@ void World::Update(float dt)
 		|| playerPosition.x >= chunkOriginWorldPosition.x + 16 
 		|| playerPosition.z >= chunkOriginWorldPosition.z + 16)
 	{
-		Vector3i newChunkDirection = Vector3i();
+		Vector3i newChunkDirection = Vector3i();		
 		//find new Chunk 
 		for (int i = 0; i < chunks.size(); i++)
 		{
@@ -42,6 +42,7 @@ void World::Update(float dt)
 			}
 		}
 		
+		terrainGenerator.UpdateWorms(currentChunk->gridPosX, currentChunk->gridPosZ, newChunkDirection);
 		//delete far away chunks
 		for (int i = chunks.size()-1; i >= 0; i--)
 		{
@@ -151,11 +152,19 @@ World::World()
 	skybox = new Skybox(10.0f);
 
 	cloudGen.GenerateClouds();
-	cloudGen.FillCloudArrays(cloudVertices, cloudIndices);
+	cloudGen.FillCloudArrays(cloudVertices, cloudIndices); 
+	//Generate relevant perlin worms
+
+	for (int x = -CHUNK_DISTANCE - 1 - WORM_DISTANCE; x <= CHUNK_DISTANCE + 1 + WORM_DISTANCE; x++) {
+		for (int z = -CHUNK_DISTANCE - 1 - WORM_DISTANCE; z <= CHUNK_DISTANCE + 1 + WORM_DISTANCE; z++) {
+			terrainGenerator.CheckForWorm(x, z);
+		}
+	}
+
+	//generate chunks around 0,0
 	for (int x = -CHUNK_DISTANCE; x <= CHUNK_DISTANCE; x++) {
 		for (int z = -CHUNK_DISTANCE; z <= CHUNK_DISTANCE; z++) {
 			Chunk* newChunk = terrainGenerator.GenerateChunk(x, z);
-			//newChunk->SetVisibility();
 			newChunk->SetTransparency();
 			chunks.push_back(newChunk);
 			if (newChunk->gridPosX == 0 && newChunk->gridPosZ == 0) currentChunk = newChunk;

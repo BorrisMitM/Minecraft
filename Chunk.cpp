@@ -106,6 +106,7 @@ void Chunk::CreateAndFillBuffer()
 	FillGrassArrays();
 	FillStoneArrays();
 
+	if (vertices.size() == 0) return;
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Cube::Vertex) * vertices.size(), &vertices[0].x, GL_DYNAMIC_DRAW);

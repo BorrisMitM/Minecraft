@@ -5,7 +5,7 @@
 
 //for chunk generation
 #define NOISE_SCALE 32 // multiplies with the value of the noise -> changes height of mountains
-#define MIN_HEIGHT 30 // gets added to the noise -> height of the lowest layer(height has this value if the noise is 0)
+#define MIN_HEIGHT 50 // gets added to the noise -> height of the lowest layer(height has this value if the noise is 0)
 #define NOISE_XMUL 3.17f // defines the used section of our perlin noise, higher numbers -> higher frequency of hills
 #define NOISE_ZMUL 3.17f
 #define CHUNK_DISTANCE 7 // how many chuncks are generated in each direction(dont know minecraft does it like this)
