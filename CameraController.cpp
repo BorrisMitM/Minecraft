@@ -188,7 +188,7 @@ void CameraController::Update(float dt, World &world)
 CameraController::CameraController()
 {
 	position.x = 0.f,
-	position.y = 75.f,
+	position.y = 100.f,
 	position.z = 0.f;
 	pitch = 0.f;
 	yaw = 180.f;

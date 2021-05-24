@@ -10,7 +10,7 @@
 #define NOISE_ZMUL 3.17f
 #define CHUNK_DISTANCE 7 // how many chuncks are generated in each direction(dont know minecraft does it like this)
 #define DIRT_THICKNESS 10 // should not be bigger than MIN_HEIGHT
-#define WATER_LEVEL 57 // from heightmap until WATER_LEVEL, we fill every empty space with water
+#define WATER_LEVEL 77 // from heightmap until WATER_LEVEL, we fill every empty space with water
 class Chunk
 {
 	unsigned int vbo;

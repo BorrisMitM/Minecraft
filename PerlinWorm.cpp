@@ -65,7 +65,7 @@ PerlinWorm::PerlinWorm(Vector3 position, float length, int wormAmount)
 			}
 		}
 	}
-	cout << "Created new Worm at ";
+	//cout << "Created new Worm at ";
 	position.Print();
 }
 
