@@ -183,6 +183,7 @@ World::~World()
 
 void World::CreateCloudBuffers()
 {
+	if (cloudVertices.size() == 0) return;
 	// cloud
 	glGenBuffers(1, &vboCloud);
 	glBindBuffer(GL_ARRAY_BUFFER, vboCloud);
