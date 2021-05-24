@@ -17,6 +17,7 @@ void World::Update(float dt)
 
 	//this can be commented in and out, later will be replaced for other player position
 	playerPosition = camera.getPosition();
+	playerPosition.Print();
 	//calculate if player is still in the current chunk
 	//a chunk has a grid position and reaches 16 units into x and z 
 

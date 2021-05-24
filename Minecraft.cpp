@@ -32,7 +32,7 @@ int main(void)
 
 	glMatrixMode(GL_PROJECTION);
 	aspect = (GLfloat)640 / 480;
-	gluPerspective(45.0, aspect, .5, 1000.0);
+	gluPerspective(45.0, aspect, .2, 1000.0);
 	glMatrixMode(GL_MODELVIEW);
 	
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

@@ -68,6 +68,11 @@ bool Cube::GetTransparency()
 	return transparency_;
 }
 
+int Cube::IsVisibleOnThisSide(int side)
+{
+	return visible[side];
+}
+
 void Cube::Delete()
 {
 	Vector3i cubeIndex(0, position.y, 0);

@@ -105,20 +105,49 @@ void CameraController::Update(float dt, World &world)
 	}
 
 	// raycast capsule
-	//vector<Raycast::CollisionInfo> collisionInfo;
-	//bool collided = Raycast::CylinderCast(position + velocity * dt, 0.5f, 0.7f, 0.3f, world, collisionInfo);
+	vector<Raycast::CollisionInfo> collisionInfo;
+	bool collided = Raycast::CylinderCast(position + velocity * dt, 0.5f, 0.7f, 0.3f, world, collisionInfo);
 
 	// check if grounded from raycast info
 	
-	int x = position.x - world.currentChunk->gridPosX * 16;
-	int z = position.z - world.currentChunk->gridPosZ * 16;
-	//Cube* cuby = Raycast::GetRelativeCube(x, position.y - 1, z , world.currentChunk);
-	Cube* cuby = world.currentChunk->cubes[x][(int)(position.y - 1.0f)][z];
-	if (cuby != NULL && velocity.y <= 0) {
-		isGrounded = true;
-		velocity.y = 0;
+	isGrounded = false;
+	if (collided) {
+		//ground checking
+		int groundY = -1;
+		if (velocity.y <= 0) {
+			Vector3 up(0, 1, 0);
+			for (int i = 0; i < collisionInfo.size(); i++)
+			{
+				if (collisionInfo[i].normal == up) {
+					isGrounded = true;
+					velocity.y = 0; 
+					groundY = collisionInfo[i].cube->position.y;
+				}
+			}
+		}
+		//top checking
+		if (velocity.y > 0) {
+			Vector3 down(0, -1, 0);
+			for (int i = 0; i < collisionInfo.size(); i++)
+			{
+				if (collisionInfo[i].normal == down) {
+					velocity.y = 0;
+				}
+			}
+		}
+		//side checking
+
+		for (int i = 0; i < collisionInfo.size(); i++)
+		{
+			if (collisionInfo[i].cube->position.y == groundY) continue;
+			if (collisionInfo[i].normal.x != 0) {
+				velocity.x = 0;
+			}
+			if (collisionInfo[i].normal.z != 0) {
+				velocity.z = 0;
+			}
+		}
 	}
-	else isGrounded = false;
 	
 	position += velocity * dt;
 

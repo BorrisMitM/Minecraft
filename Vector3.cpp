@@ -86,6 +86,7 @@ float Vector3::sqrdMagnitude()
 void Vector3::Normalize()
 {
 	float length = sqrt(x * x + y * y + z * z);
+	if (length == 0) return;
 	x /= length;
 	y /= length;
 	z /= length;

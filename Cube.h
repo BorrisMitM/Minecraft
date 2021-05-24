@@ -24,6 +24,7 @@ public:
 	bool GetTransparency();
 	Vector3 position;
 
+	int IsVisibleOnThisSide(int side);
 	void Delete();
 
 	void AddToBufferArrays(std::vector<Cube::Vertex>& arrayOfDirtVertices, std::vector<unsigned int>& arrayOfDirtIndices);
