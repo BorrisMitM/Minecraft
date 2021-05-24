@@ -7,7 +7,7 @@ class Cloud
 public:
 
 	int gridPosX, gridPosZ;
-	vector<Cube*> cloudCubes;
+	Cube* cloudCubes[16][16];
 	int cloudHeight; //y-height of the clouds in the world
 	float cloudThreshhold; //ranges from 0 - 1
 
