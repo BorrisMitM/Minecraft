@@ -4,6 +4,8 @@
 #include <math.h>
 #include "Vector3.h"
 #include <vector>
+
+//contains all information a cube needs to be rendered
 class Chunk;
 class Cube
 {
@@ -18,17 +20,20 @@ protected:
 	float GetUVOffsetX();
 	float GetUVOffsetY();
 public:
+	Vector3 position;
 	Chunk* chunk;
+
+	//getter setter
 	void SetVisibilty(int direction, bool isVisible);
 	void SetTransparency(bool transparency);
 	bool GetTransparency();
-	Vector3 position;
-
 	int IsVisibleOnThisSide(int side);
-	void Delete();
-
-	void AddToBufferArrays(std::vector<Cube::Vertex>& arrayOfDirtVertices, std::vector<unsigned int>& arrayOfDirtIndices);
 	int GetVisibleSides();
+
+	// deletes this cube and sets the visibility of the surrounding cubes
+	void Delete(); 
+
+	void AddToBufferArrays(std::vector<Cube::Vertex>& vertices, std::vector<unsigned int>& indices);
 	Cube(Vector3 position);
 	Cube(float x, float y, float z);
 	~Cube();

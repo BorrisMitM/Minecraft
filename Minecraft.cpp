@@ -9,13 +9,14 @@
 #include <algorithm>
 // --------------------------------------------------------------------------------
 
+//Time management
 float timeSinceStart= 0, oldTimeSinceStart = 0;
 float deltaTime;
-float maxDeltaTime = 0.02f;
+float maxDeltaTime = 0.02f; // prevents big movements per frame if the fps drop
 
 int main(void)
 {
-	//Markus stuff
+	//Setup GL Window and general OpenGL preferences
 
 	GLWindow		window(1280, 960, "Window");
 	if (window.Init() == false) exit(EXIT_FAILURE);
@@ -37,26 +38,29 @@ int main(void)
 	
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glCullFace(GL_FRONT);
+
+
 	//Create World
 	World world;
 
+	//Setup camera controller
 	world.camera.Setup(&window);
 
 	glViewport(0, 0, window.m_nWidth, window.m_nHeight);	
 	while (window.IsRunning()) {
-
+		//delta time calculations
 		timeSinceStart = glfwGetTime();
 		deltaTime = timeSinceStart - oldTimeSinceStart;
 		if (deltaTime > maxDeltaTime) deltaTime = maxDeltaTime;
 		oldTimeSinceStart = timeSinceStart;
-		//cout << 1.0f / deltaTime << endl;
+
+		//Updating World
 		world.HandleInput(deltaTime);
 		world.Update(deltaTime);
 		world.RenderWorld();
 
 
 		glFlush();
-		//Sleep(30);
 		window.Present();
 	}
 

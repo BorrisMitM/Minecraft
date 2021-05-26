@@ -17,7 +17,7 @@
 #include <GLFW/glfw3.h>
 
 // --------------------------------------------------------------------------------
-
+//creates a GLFWwindow and gives us some extra functionality
 class GLWindow
 {
 public:

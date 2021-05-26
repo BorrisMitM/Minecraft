@@ -9,7 +9,7 @@
 #include <fstream>
 
 // -------------------------------------------------------
-
+//Takes care of loading textures into a bitmap
 class CBitmap
 {
 public:

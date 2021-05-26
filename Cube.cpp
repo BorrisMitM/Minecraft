@@ -1,6 +1,7 @@
 #include "Cube.h"
 #include "Chunk.h"
 #include "Vector3i.h"
+//vertices of a cube 
 const Cube::Vertex Cube::vertexTemplate[36] = {
 	// vertices		normals		uvs
 	{0.0,0.0,1.0 ,0.0,0.0,1.0 ,0.0,0.33}, // front	
@@ -35,6 +36,7 @@ const Cube::Vertex Cube::vertexTemplate[36] = {
 };
 
 //see MinecraftAtlas.png for reference
+//Gets the correct offset of the uv coordinates for the texture atlas
 float Cube::GetUVOffsetX()
 {
 	float offset = 0;
@@ -77,20 +79,17 @@ void Cube::Delete()
 {
 	Vector3i cubeIndex(0, position.y, 0);
 
+	//calculate local x and z coordinates
 	cubeIndex.x = position.x - chunk->gridPosX * 16;
 	cubeIndex.z = position.z - chunk->gridPosZ * 16;
 
-	/*if (position.x < 0) {
-		cubeIndex.x = 16 + (int)round(position.x) % 16;
-	}
-	else cubeIndex.x = (int)position.x % 16;
-	if (position.z < 0) {
-		cubeIndex.z = 16 + (int)round(position.z) % 16;
-	}
-	else cubeIndex.z = (int)position.z % 16;*/
+	//set the position of the cube in the chunk to NULL
 	chunk->cubes[cubeIndex.x][cubeIndex.y][cubeIndex.z] = NULL;
+
+
 	vector<int> modifiedNeighbors;
 
+	//recalculate neighbors visibility, taking into account if the neighbor is in the neighbor chunk
 	if (cubeIndex.x > 0) {
 		chunk->SetVisibility(cubeIndex.x - 1, cubeIndex.y, cubeIndex.z);
 	}
@@ -132,7 +131,7 @@ void Cube::Delete()
 	}
 
 	
-	
+	//update buffers, for this chunk and modified neighborchunks
 	chunk->CreateAndFillBuffer();
 	for (int i = 0; i < modifiedNeighbors.size(); i++) {
 		chunk->neighbors[modifiedNeighbors[i]]->CreateAndFillBuffer();
@@ -141,8 +140,9 @@ void Cube::Delete()
 }
 
 
-void Cube::AddToBufferArrays(std::vector<Cube::Vertex>& arrayOfDirtVertices, std::vector<unsigned int>& arrayOfDirtIndices)
+void Cube::AddToBufferArrays(std::vector<Cube::Vertex>& vertices, std::vector<unsigned int>& indecies)
 {
+	//index order
 	unsigned int offsetIndices[6] = { 0, 1, 2, 1, 3, 2 };
 
 	for (int side = 0; side < 6; side++) {
@@ -161,20 +161,16 @@ void Cube::AddToBufferArrays(std::vector<Cube::Vertex>& arrayOfDirtVertices, std
 					vertexTemplate[i].u * 0.5f + GetUVOffsetX(), // could modifiy these depending on block type
 					vertexTemplate[i].v * 0.5f + GetUVOffsetY() // would need a block type enum which should be fine
 				};
-				arrayOfDirtVertices.push_back(vertex);
+				vertices.push_back(vertex);
 			}
 
-			unsigned int startingIndexPosition = 4 * arrayOfDirtIndices.size() / 6;
-			//cout << "startingIndexPosition " << startingIndexPosition << ": " << endl;
+			//calculate starting index in indice array
+			unsigned int startingIndexPosition = 4 * indecies.size() / 6;
+
+			//add inidicies to the array
 			for (int j = 0; j < 6; j++) {
 				unsigned int indexValue = startingIndexPosition + offsetIndices[j];
-		/*		cout << "indexValue " << indexValue << endl;
-
-				cout << "arrayOfDirtVertices[indexValue].x " << arrayOfDirtVertices[indexValue].x << endl;
-				cout << "arrayOfDirtVertices[indexValue].y " << arrayOfDirtVertices[indexValue].y << endl;
-				cout << "arrayOfDirtVertices[indexValue].z " << arrayOfDirtVertices[indexValue].z << endl;*/
-
-				arrayOfDirtIndices.push_back(indexValue);
+				indecies.push_back(indexValue);
 			}
 		}
 	}

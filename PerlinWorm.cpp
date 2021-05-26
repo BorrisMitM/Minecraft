@@ -1,11 +1,12 @@
 #include "PerlinWorm.h"
 #include "Vector3i.h"
+
 PerlinWorm::PerlinWorm(Vector3 position, float length, int wormAmount)
 {
-
+	//setup noise objects and variables for the perlin worm algorythm
 	startPosition = position;
 	startPosition.y = 0;
-	//create noise object
+
 	FastNoiseLite wormRotNoise;
 	wormRotNoise.SetSeed(rand());
 	wormRotNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
@@ -13,19 +14,24 @@ PerlinWorm::PerlinWorm(Vector3 position, float length, int wormAmount)
 	radiusNoise.SetSeed(rand());
 	radiusNoise.SetNoiseType(FastNoiseLite::NoiseType::NoiseType_Value);
 	int radius = round((radiusNoise.GetNoise(0.0f,0.0f)*0.5+0.5f)*3+1);
+
 	int yPosition = rand() % (MIN_HEIGHT - 20) + 20;
 	Vector3 currentDirection(0, 1, 0);
+	//create wormAmount worms from (0,yPosition,0)
 	for (int i = 0; i < wormAmount; i++) {
 		Vector3 currentPosition(0,yPosition,0);
 
 		float distance = 0;
 
 		while (distance < length) {
+			//vary radius based on distance traveled
 			radius = round((radiusNoise.GetNoise(distance + length * i, 0.0f) * 0.5 + 0.5f) * 3 + 1);
 
+			//get pitch and yaw from the x and y axis of the noise
 			float pitch = wormRotNoise.GetNoise(distance + length * i, 0.0f) * 90;
 			float yaw = wormRotNoise.GetNoise(0.0f, distance + length * i) * 180;
 
+			//calculate new direction
 			float cosPitch = cosf(pitch * 3.1415 / 180);
 			float cosYaw = cosf(yaw * 3.1415 / 180);
 
@@ -36,20 +42,23 @@ PerlinWorm::PerlinWorm(Vector3 position, float length, int wormAmount)
 			currentDirection.y = sinPitch;
 			currentDirection.z = cosPitch * -cosYaw;
 
+			//move in direction
 			currentPosition += currentDirection;
 
 			distance += 1.0f;
 			//currentPosition.Print();
 
-
+			//try again if currentPosition is outside of the WORM_DISTANCE
 			if (currentPosition.x < -(WORM_DISTANCE) * 16
 				|| currentPosition.z < -(WORM_DISTANCE) * 16
 				|| currentPosition.x >= (WORM_DISTANCE + 1) * 16
 				|| currentPosition.z >= (WORM_DISTANCE + 1) * 16
 				|| currentPosition.y >= MIN_HEIGHT
 				|| currentPosition.y <= radius) continue;
+			//calculate position in the grid
 			Vector3i positionInGrid(currentPosition.x + (WORM_DISTANCE) * 16, currentPosition.y, currentPosition.z + (WORM_DISTANCE) * 16);
 
+			//carve out radius from currentPosition
 			for (int x = -radius; x <= radius; x++) {
 				for (int y = -radius; y <= radius; y++) {
 					for (int z = -radius; z <= radius; z++) {
@@ -57,7 +66,6 @@ PerlinWorm::PerlinWorm(Vector3 position, float length, int wormAmount)
 						if (positionInGrid.x + x < 0 || positionInGrid.x + x >= (WORM_DISTANCE * 2 + 1) * 16 ||
 							positionInGrid.z + z < 0 || positionInGrid.z + z >= (WORM_DISTANCE * 2 + 1) * 16 ||
 							positionInGrid.y + y < 0 || positionInGrid.y + y >= MIN_HEIGHT) continue;
-						//cout << "set data in worm" << endl;
 						wormData[positionInGrid.x + x][positionInGrid.y + y][positionInGrid.z + z] = true;
 
 					}
@@ -66,7 +74,7 @@ PerlinWorm::PerlinWorm(Vector3 position, float length, int wormAmount)
 		}
 	}
 	//cout << "Created new Worm at ";
-	position.Print();
+	//position.Print();
 }
 
 bool PerlinWorm::IsCaveAt(Vector3 worldPos)

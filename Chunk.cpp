@@ -5,6 +5,7 @@ void Chunk::SetVisibility(int x, int y, int z)
 {
 	if (cubes[x][y][z] == NULL) return;
 
+	//always render just the top layer of water blocks
 	if (cubes[x][y][z]->type == Cube::BlockType::Water) {
 		cubes[x][y][z]->SetVisibilty(0, false);
 		cubes[x][y][z]->SetVisibilty(1, false);
@@ -16,6 +17,7 @@ void Chunk::SetVisibility(int x, int y, int z)
 	}
 
 	bool isVisible = true;
+	//check for neighbor cubes and set visibility accordingly
 	if (x > 0) {
 		isVisible = cubes[x - 1][y][z] == NULL || cubes[x - 1][y][z]->GetTransparency();
 		cubes[x][y][z]->SetVisibilty(3, isVisible);
@@ -100,12 +102,14 @@ void Chunk::SetTransparency()
 
 void Chunk::CreateAndFillBuffer()
 {
+	//refill arrays
 	vertices.clear();
 	indices.clear();
 	FillDirtArrays();
 	FillGrassArrays();
 	FillStoneArrays();
 
+	//send arrays to OpenGL
 	if (vertices.size() == 0) return;
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -115,7 +119,7 @@ void Chunk::CreateAndFillBuffer()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), &indices.front(), GL_DYNAMIC_DRAW);
 
-
+	//do the same for water
 	FillWaterArrays();
 
 	if (waterVertices.size() > 0) {
@@ -132,6 +136,7 @@ void Chunk::CreateAndFillBuffer()
 
 void Chunk::FillDirtArrays()
 {
+	//for simplifications sake: every cube that is DIRT_THICKNESS below the heightmap is a dirt block
 	for (int x = 0; x < 16; x++)
 	{
 		for (int z = 0; z < 16; z++)
@@ -150,6 +155,7 @@ void Chunk::FillDirtArrays()
 
 void Chunk::FillGrassArrays()
 {
+	//every cube on the top is a grass block
 	for (int x = 0; x < 16; x++)
 	{
 		for (int z = 0; z < 16; z++)
@@ -165,6 +171,7 @@ void Chunk::FillGrassArrays()
 
 void Chunk::FillStoneArrays()
 {
+	//everything below DIRT_THICKNESS is a stone block
 	for (int x = 0; x < 16; x++)
 	{
 		for (int z = 0; z < 16; z++)
@@ -183,6 +190,7 @@ void Chunk::FillStoneArrays()
 
 void Chunk::FillWaterArrays()
 {
+	//water type gets set in the generation already so we only have to check for water type
 	for (int x = 0; x < 16; x++)
 	{
 		for (int z = 0; z < 16; z++)
