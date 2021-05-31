@@ -5,82 +5,130 @@ void Chunk::SetVisibility(int x, int y, int z)
 {
 	if (cubes[x][y][z] == NULL) return;
 
-	//always render just the top layer of water blocks
-	if (cubes[x][y][z]->type == Cube::BlockType::Water) {
-		cubes[x][y][z]->SetVisibilty(0, false);
-		cubes[x][y][z]->SetVisibilty(1, false);
-		cubes[x][y][z]->SetVisibilty(2, false);
-		cubes[x][y][z]->SetVisibilty(3, false);
-		cubes[x][y][z]->SetVisibilty(4, true);
-		cubes[x][y][z]->SetVisibilty(5, true);
-		return;
-	}
-
 	bool isVisible = true;
-	//check for neighbor cubes and set visibility accordingly
-	if (x > 0) {
-		isVisible = cubes[x - 1][y][z] == NULL || cubes[x - 1][y][z]->GetTransparency();
-		cubes[x][y][z]->SetVisibilty(3, isVisible);
-	}
-	else if (neighbors[3] != nullptr) {
-		isVisible = neighbors[3]->cubes[15][y][z] == NULL || neighbors[3]->cubes[15][y][z]->GetTransparency();
-		cubes[x][y][z]->SetVisibilty(3, isVisible); // checking in left neighbor
-	}
-	else {
-		cubes[x][y][z]->SetVisibilty(3, true);
-	}
+	// water cubes have their own rendering logic
+	if (cubes[x][y][z]->type != Cube::BlockType::Water) { // NOT WATER
+		//check for neighbor cubes and set visibility accordingly
+		if (x > 0) {
+			isVisible = cubes[x - 1][y][z] == NULL || cubes[x - 1][y][z]->GetTransparency();
+			cubes[x][y][z]->SetVisibilty(3, isVisible);
+		}
+		else if (neighbors[3] != nullptr) {
+			isVisible = neighbors[3]->cubes[15][y][z] == NULL || neighbors[3]->cubes[15][y][z]->GetTransparency();
+			cubes[x][y][z]->SetVisibilty(3, isVisible); // checking in left neighbor
+		}
+		else {
+			cubes[x][y][z]->SetVisibilty(3, true);
+		}
 
-	if (x < 15) {
-		isVisible = cubes[x + 1][y][z] == NULL || cubes[x + 1][y][z]->GetTransparency();
-		cubes[x][y][z]->SetVisibilty(1, isVisible);
-	}
-	else if (neighbors[1] != nullptr) {
-		isVisible = neighbors[1]->cubes[0][y][z] == NULL || neighbors[1]->cubes[0][y][z]->GetTransparency();
-		cubes[x][y][z]->SetVisibilty(1, isVisible); // checking in right neighbor
-	}
-	else {
-		cubes[x][y][z]->SetVisibilty(1, true);
-	}
+		if (x < 15) {
+			isVisible = cubes[x + 1][y][z] == NULL || cubes[x + 1][y][z]->GetTransparency();
+			cubes[x][y][z]->SetVisibilty(1, isVisible);
+		}
+		else if (neighbors[1] != nullptr) {
+			isVisible = neighbors[1]->cubes[0][y][z] == NULL || neighbors[1]->cubes[0][y][z]->GetTransparency();
+			cubes[x][y][z]->SetVisibilty(1, isVisible); // checking in right neighbor
+		}
+		else {
+			cubes[x][y][z]->SetVisibilty(1, true);
+		}
 
-	if (z > 0) {
-		isVisible = cubes[x][y][z - 1] == NULL || cubes[x][y][z - 1]->GetTransparency();
-		cubes[x][y][z]->SetVisibilty(2, isVisible);
-	}
-	else if (neighbors[2] != nullptr) {
-		isVisible = neighbors[2]->cubes[x][y][15] == NULL || neighbors[2]->cubes[x][y][15]->GetTransparency();
-		cubes[x][y][z]->SetVisibilty(2, isVisible); // checking in back neighbor
-	}
-	else {
-		cubes[x][y][z]->SetVisibilty(2, true);
-	}
+		if (z > 0) {
+			isVisible = cubes[x][y][z - 1] == NULL || cubes[x][y][z - 1]->GetTransparency();
+			cubes[x][y][z]->SetVisibilty(2, isVisible);
+		}
+		else if (neighbors[2] != nullptr) {
+			isVisible = neighbors[2]->cubes[x][y][15] == NULL || neighbors[2]->cubes[x][y][15]->GetTransparency();
+			cubes[x][y][z]->SetVisibilty(2, isVisible); // checking in back neighbor
+		}
+		else {
+			cubes[x][y][z]->SetVisibilty(2, true);
+		}
 
-	if (z < 15) {
-		isVisible = cubes[x][y][z + 1] == NULL || cubes[x][y][z + 1]->GetTransparency();
-		cubes[x][y][z]->SetVisibilty(0, isVisible);
-	}
-	else if (neighbors[0] != nullptr) {
-		isVisible = neighbors[0]->cubes[x][y][0] == NULL || neighbors[0]->cubes[x][y][0]->GetTransparency();
-		cubes[x][y][z]->SetVisibilty(0, isVisible); // checking in top neighbor
-	}
-	else {
-		cubes[x][y][z]->SetVisibilty(0, true);
-	}
+		if (z < 15) {
+			isVisible = cubes[x][y][z + 1] == NULL || cubes[x][y][z + 1]->GetTransparency();
+			cubes[x][y][z]->SetVisibilty(0, isVisible);
+		}
+		else if (neighbors[0] != nullptr) {
+			isVisible = neighbors[0]->cubes[x][y][0] == NULL || neighbors[0]->cubes[x][y][0]->GetTransparency();
+			cubes[x][y][z]->SetVisibilty(0, isVisible); // checking in top neighbor
+		}
+		else {
+			cubes[x][y][z]->SetVisibilty(0, true);
+		}
 
 
-	if (y > 0) {
-		isVisible = cubes[x][y - 1][z] == NULL || cubes[x][y - 1][z]->GetTransparency();
-		cubes[x][y][z]->SetVisibilty(5, isVisible);
+		if (y > 0) {
+			isVisible = cubes[x][y - 1][z] == NULL || cubes[x][y - 1][z]->GetTransparency();
+			cubes[x][y][z]->SetVisibilty(5, isVisible);
+		}
+		else {
+			cubes[x][y][z]->SetVisibilty(5, false);
+		}
+
+		if (y < 255) {
+			isVisible = cubes[x][y + 1][z] == NULL || cubes[x][y + 1][z]->GetTransparency();
+			cubes[x][y][z]->SetVisibilty(4, isVisible);
+		}
+		else {
+			cubes[x][y][z]->SetVisibilty(4, false);
+		}
+
 	}
-	else {
+	else { // WATER
+		//always render the top layer of water blocks, and never the bottom
+		cubes[x][y][z]->SetVisibilty(4, true);
 		cubes[x][y][z]->SetVisibilty(5, false);
-	}
 
-	if (y < 255) {
-		isVisible = cubes[x][y + 1][z] == NULL || cubes[x][y + 1][z]->GetTransparency();
-		cubes[x][y][z]->SetVisibilty(4, isVisible);
-	}
-	else {
-		cubes[x][y][z]->SetVisibilty(4, false);
+		// laterals should be rendered only when there's air next to them.
+		// so we check for neighbour cubes on plane XZ and set visibility accordingly
+		if (x > 0) {
+			isVisible = cubes[x - 1][y][z] == NULL;
+			cubes[x][y][z]->SetVisibilty(3, isVisible);
+		}
+		else if (neighbors[3] != nullptr) {
+			isVisible = neighbors[3]->cubes[15][y][z] == NULL;
+			cubes[x][y][z]->SetVisibilty(3, isVisible); // checking in left neighbor
+		}
+		else {
+			cubes[x][y][z]->SetVisibilty(3, true);
+		}
+
+		if (x < 15) {
+			isVisible = cubes[x + 1][y][z] == NULL;
+			cubes[x][y][z]->SetVisibilty(1, isVisible);
+		}
+		else if (neighbors[1] != nullptr) {
+			isVisible = neighbors[1]->cubes[0][y][z] == NULL;
+			cubes[x][y][z]->SetVisibilty(1, isVisible); // checking in right neighbor
+		}
+		else {
+			cubes[x][y][z]->SetVisibilty(1, true);
+		}
+
+		if (z > 0) {
+			isVisible = cubes[x][y][z - 1] == NULL;
+			cubes[x][y][z]->SetVisibilty(2, isVisible);
+		}
+		else if (neighbors[2] != nullptr) {
+			isVisible = neighbors[2]->cubes[x][y][15] == NULL;
+			cubes[x][y][z]->SetVisibilty(2, isVisible); // checking in back neighbor
+		}
+		else {
+			cubes[x][y][z]->SetVisibilty(2, true);
+		}
+
+		if (z < 15) {
+			isVisible = cubes[x][y][z + 1] == NULL;
+			cubes[x][y][z]->SetVisibilty(0, isVisible);
+		}
+		else if (neighbors[0] != nullptr) {
+			isVisible = neighbors[0]->cubes[x][y][0] == NULL;
+			cubes[x][y][z]->SetVisibilty(0, isVisible); // checking in top neighbor
+		}
+		else {
+			cubes[x][y][z]->SetVisibilty(0, true);
+		}
 	}
 }
 
