@@ -4,13 +4,17 @@
 #define NOISE_XMUL 4.17f // defines the used section of our perlin noise, higher numbers -> higher frequency of hills
 #define NOISE_ZMUL 4.17f
 
-Cloud::Cloud()
+#define BUFFER_OFFSET(i) ((void*)(i))
+
+Cloud::Cloud(int _gridPosX, int _gridPosZ)
 {
 	cloudHeight = 100;
 	cloudThreshhold = 0.6f;
-	gridPosX = 0;
-	gridPosZ = 0;
+	gridPosX = _gridPosX;
+	gridPosZ = _gridPosZ;
+	GenerateClouds();
 }
+
 
 Cloud::~Cloud()
 {
@@ -34,16 +38,26 @@ void Cloud::GenerateClouds()
 
 			if (noiseValue >= cloudThreshhold)
 			{
-				Cube* cloudCube = new Cube(x, cloudHeight, z);
+				Cube* cloudCube = new Cube(x + gridPosX * 16, cloudHeight, z + gridPosZ * 16);
 				cloudCubes[x][z] = cloudCube;
 			}
 
 		}
 	}
+	FillCloudArrays();
+	if (vertices.size() == 0) return;
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Cube::Vertex) * vertices.size(), &vertices[0].x, GL_DYNAMIC_DRAW);
+
+	glGenBuffers(1, &ibo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), &indices.front(), GL_DYNAMIC_DRAW);
 }
 
 void Cloud::Update(float deltaTime)
 {
+	glfwGetTime();
 	//noiseOffset += windspeed * deltaTime;
 	//posOffset += windspeed * deltaTime;
 	//move cubes by wind & -playermovement
@@ -53,16 +67,34 @@ void Cloud::Update(float deltaTime)
 	//create on the left with noise foreach (z) if(noise.(gridposX * 16 + noiseOffset, gridposZ * 16 + z)) create cloud or dont
 }
 
-void Cloud::FillCloudArrays(std::vector<Cube::Vertex>& arrayOfCloudVertices, std::vector<unsigned int>& arrayOfCloudIndices)
+void Cloud::Render()
 {
-	
-	/*for (int i = 0; i < cloudCubes.size(); i++)
-	{			
-		if (cloudCubes[i] != NULL) 
-		{
-			cloudCubes[i]->AddToBufferArrays(arrayOfCloudVertices, arrayOfCloudIndices);
-		}	
-	}*/
+	if (vertices.size() == 0) return;
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, sizeof(Cube::Vertex), BUFFER_OFFSET(0)); // The starting point of the VBO, for the vertices
 
-	
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glNormalPointer(GL_FLOAT, sizeof(Cube::Vertex), BUFFER_OFFSET(12)); // The starting point of normals, 12 bytes away
+
+	glClientActiveTexture(GL_TEXTURE0);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glTexCoordPointer(2, GL_FLOAT, sizeof(Cube::Vertex), BUFFER_OFFSET(24)); // The starting point of texcoords, 24 bytes away
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+
+	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0);
+}
+
+void Cloud::FillCloudArrays()
+{
+	for (int x = 0; x < 16; x++)
+	{
+		for (int z = 0; z < 16; z++)
+		{
+			if (cloudCubes[x][z] != NULL)
+			{
+				cloudCubes[x][z]->AddToBufferArrays(vertices, indices);
+			}
+		}
+	}
 }

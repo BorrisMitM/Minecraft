@@ -101,14 +101,10 @@ void World::RenderWorld()
 	for (int i = 0; i < chunks.size(); i++) {
 		chunks[i]->Render();
 	}
-	// we tried transparency artistic decision
-	glDisable(GL_CULL_FACE);
+	textureManager.BindTexture(textureManager.cloudTexture);
 	for (int i = 0; i < chunks.size(); i++) {
-		chunks[i]->RenderWater();
+		chunks[i]->cloud->Render();
 	}
-	glEnable(GL_CULL_FACE);
-	BindBuffer(vboCloud, iboCloud, textureManager.cloudTexture);
-	glDrawElements(GL_TRIANGLES, cloudIndices.size(), GL_UNSIGNED_INT, (void*)0);
 }
 
 void World::DeleteCube(Cube* cube)
@@ -151,8 +147,6 @@ World::World()
 
 	skybox = new Skybox(10.0f);
 
-	cloudGen.GenerateClouds();
-	cloudGen.FillCloudArrays(cloudVertices, cloudIndices); 
 	//Generate relevant perlin worms
 
 	for (int x = -CHUNK_DISTANCE - 1 - WORM_DISTANCE; x <= CHUNK_DISTANCE + 1 + WORM_DISTANCE; x++) {
@@ -177,7 +171,6 @@ World::World()
 		chunks[i]->CreateAndFillBuffer();
 	}
 
-	CreateCloudBuffers();
 }
 
 
@@ -190,28 +183,7 @@ World::~World()
 }
 
 
-void World::CreateCloudBuffers()
-{
-	if (cloudVertices.size() == 0) return;
-	// cloud
-	glGenBuffers(1, &vboCloud);
-	glBindBuffer(GL_ARRAY_BUFFER, vboCloud);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Cube::Vertex) * cloudVertices.size(), &cloudVertices[0].x, GL_DYNAMIC_DRAW);
 
-	glGenBuffers(1, &iboCloud);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboCloud);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * cloudIndices.size(), &cloudIndices.front(), GL_DYNAMIC_DRAW);
-}
-
-void World::UpdateBuffers()
-{
-	//clouds
-	glBindBuffer(GL_ARRAY_BUFFER, vboCloud);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Cube::Vertex) * cloudVertices.size(), &cloudVertices[0].x, GL_DYNAMIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboCloud);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * cloudIndices.size(), &cloudIndices.front(), GL_DYNAMIC_DRAW);
-}
 
 void World::CalculateNeighbors()
 {

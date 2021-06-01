@@ -22,17 +22,8 @@ private:
 	vector<Chunk*> chunks;
 	Skybox* skybox;
 
-	Cloud cloudGen;
 	TerrainGenerator terrainGenerator;
 
-	unsigned int vboCloud;
-	unsigned int iboCloud;
-
-	std::vector<Cube::Vertex> cloudVertices;
-	std::vector<unsigned int> cloudIndices;
-
-	void CreateCloudBuffers();
-	void UpdateBuffers();
 	void CalculateNeighbors();
 
 	void BindBuffer(unsigned int vbo, unsigned int ibo, unsigned int texture);

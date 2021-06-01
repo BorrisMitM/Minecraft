@@ -1,7 +1,7 @@
 #pragma once
 #include "Cube.h"
 #include "TextureManager.h"
-
+#include "Cloud.h"
 //A chunk contains a 3d array of cubes, which can be loaded and unloaded
 //It collects all vertices of the cubes inside of it and sends them to OpenGL
 //for chunk generation
@@ -17,18 +17,15 @@ class Chunk
 	//vertex and index array infos
 	unsigned int vbo;
 	unsigned int ibo;
-	unsigned int waterVbo;
-	unsigned int waterIbo;
 	std::vector<Cube::Vertex> vertices;
 	std::vector<unsigned int> indices;
-	std::vector<Cube::Vertex> waterVertices;
-	std::vector<unsigned int> waterIndices;
 
 	void FillDirtArrays();
 	void FillGrassArrays();
 	void FillStoneArrays();
 	void FillWaterArrays();
 public:
+	Cloud* cloud;
 	int gridPosX, gridPosZ; // position of the chunk ( in chonk grid)
 	Cube* cubes[16][256][16];
 	Chunk* neighbors[4]; // up, right, down, left
@@ -38,7 +35,9 @@ public:
 
 	void CreateAndFillBuffer();
 
+	void Update(float dt);
+	void CreateCloud();
+
 	void Render();
-	void RenderWater();
 	~Chunk();
 };

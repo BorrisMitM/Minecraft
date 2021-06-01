@@ -156,6 +156,7 @@ void Chunk::CreateAndFillBuffer()
 	FillDirtArrays();
 	FillGrassArrays();
 	FillStoneArrays();
+	FillWaterArrays();
 
 	//send arrays to OpenGL
 	if (vertices.size() == 0) return;
@@ -166,19 +167,6 @@ void Chunk::CreateAndFillBuffer()
 	glGenBuffers(1, &ibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), &indices.front(), GL_DYNAMIC_DRAW);
-
-	//do the same for water
-	FillWaterArrays();
-
-	if (waterVertices.size() > 0) {
-		glGenBuffers(1, &waterVbo);
-		glBindBuffer(GL_ARRAY_BUFFER, waterVbo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(Cube::Vertex) * waterVertices.size(), &waterVertices[0].x, GL_DYNAMIC_DRAW);
-
-		glGenBuffers(1, &waterIbo);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, waterIbo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * waterIndices.size(), &waterIndices.front(), GL_DYNAMIC_DRAW);
-	}
 }
 
 
@@ -247,13 +235,23 @@ void Chunk::FillWaterArrays()
 			{
 				if (cubes[x][y][z] != NULL && cubes[x][y][z]->type == Cube::BlockType::Water) {
 					SetVisibility(x, y, z);
-					cubes[x][y][z]->AddToBufferArrays(waterVertices, waterIndices);
+					cubes[x][y][z]->AddToBufferArrays(vertices, indices);
 				}
 			}
 		}
 	}
 }
 
+
+void Chunk::Update(float dt)
+{
+	cloud->FillCloudArrays();
+}
+
+void Chunk::CreateCloud()
+{
+	cloud = new Cloud(gridPosX, gridPosZ);
+}
 
 void Chunk::Render()
 {
@@ -272,21 +270,6 @@ void Chunk::Render()
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0);
 }
 
-void Chunk::RenderWater() {
-	glBindBuffer(GL_ARRAY_BUFFER, waterVbo);
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, sizeof(Cube::Vertex), BUFFER_OFFSET(0)); // The starting point of the VBO, for the vertices
-
-	glEnableClientState(GL_NORMAL_ARRAY);
-	glNormalPointer(GL_FLOAT, sizeof(Cube::Vertex), BUFFER_OFFSET(12)); // The starting point of normals, 12 bytes away
-
-	glClientActiveTexture(GL_TEXTURE0);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glTexCoordPointer(2, GL_FLOAT, sizeof(Cube::Vertex), BUFFER_OFFSET(24)); // The starting point of texcoords, 24 bytes away
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, waterIbo);
-
-	glDrawElements(GL_TRIANGLES, waterIndices.size(), GL_UNSIGNED_INT, (void*)0);
-}
 
 Chunk::~Chunk()
 {

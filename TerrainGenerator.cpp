@@ -59,7 +59,7 @@ Chunk* TerrainGenerator::GenerateChunk(int gridPosX, int gridPosZ)
 			}
 		}
 	}
-
+	newChunk->CreateCloud();
 
 	//generate caves
 	return newChunk;
