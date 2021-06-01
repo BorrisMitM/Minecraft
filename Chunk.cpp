@@ -243,14 +243,14 @@ void Chunk::FillWaterArrays()
 }
 
 
-void Chunk::Update(float dt)
+void Chunk::Update(float dt, float timeSinceStart)
 {
-	cloud->FillCloudArrays();
+	cloud->Update(dt, timeSinceStart);
 }
 
-void Chunk::CreateCloud()
+void Chunk::CreateCloud(float timeSinceStart)
 {
-	cloud = new Cloud(gridPosX, gridPosZ);
+	cloud = new Cloud(gridPosX, gridPosZ, timeSinceStart);
 }
 
 void Chunk::Render()

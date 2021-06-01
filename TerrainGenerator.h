@@ -26,7 +26,7 @@ public:
 	TerrainGenerator();
 	FastNoiseLite noise;
 	FastNoiseLite wormNoise;
-	Chunk* GenerateChunk(int gridPosX, int gridPosZ);
+	Chunk* GenerateChunk(int gridPosX, int gridPosZ, float timeSinceStart);
 	void CheckForWorm(int gridX, int gridZ);
 	void UpdateWorms(int gridX, int gridZ, Vector3i dir); // update the worm array with a new middle points (gridX, gridZ) and a direction we are coming from
 	bool IsCaveAt(Vector3 position);

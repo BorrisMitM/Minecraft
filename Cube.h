@@ -33,7 +33,7 @@ public:
 	// deletes this cube and sets the visibility of the surrounding cubes
 	void Delete(); 
 
-	void AddToBufferArrays(std::vector<Cube::Vertex>& vertices, std::vector<unsigned int>& indices);
+	void AddToBufferArrays(std::vector<Cube::Vertex>& vertices, std::vector<unsigned int>& indices, float offset = 0);
 	Cube(Vector3 position);
 	Cube(float x, float y, float z);
 	~Cube();

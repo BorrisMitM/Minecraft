@@ -35,8 +35,8 @@ public:
 
 	void CreateAndFillBuffer();
 
-	void Update(float dt);
-	void CreateCloud();
+	void Update(float dt, float timeSinceStart);
+	void CreateCloud(float timeSinceStart);
 
 	void Render();
 	~Chunk();

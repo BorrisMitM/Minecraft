@@ -9,12 +9,13 @@ void World::HandleInput(float dt)
 	camera.HandleInput(dt, *this);
 }
 
-void World::Update(float dt)
+void World::Update(float dt, float timeSinceStart)
 {
 	camera.Update(dt, *this);
 	skybox->SetPosition(camera.getPosition());
-
-
+	for (int i = 0; i < chunks.size(); i++) {
+		chunks[i]->Update(dt, timeSinceStart);
+	}
 	//this can be commented in and out, later will be replaced for other player position
 	playerPosition = camera.getPosition();
 	//calculate if player is still in the current chunk
@@ -61,14 +62,14 @@ void World::Update(float dt)
 		vector<Chunk*> newChunks;
 		if (newChunkDirection.x != 0) {
 			for (int i = -CHUNK_DISTANCE; i <= CHUNK_DISTANCE; i++) {
-				Chunk* newChunk = terrainGenerator.GenerateChunk(currentChunk->gridPosX + newChunkDirection.x * CHUNK_DISTANCE, currentChunk->gridPosZ + i);
+				Chunk* newChunk = terrainGenerator.GenerateChunk(currentChunk->gridPosX + newChunkDirection.x * CHUNK_DISTANCE, currentChunk->gridPosZ + i, timeSinceStart);
 				chunks.push_back(newChunk); 
 				newChunks.push_back(newChunk);
 			}
 		}
 		if (newChunkDirection.z != 0) {
 			for (int i = -CHUNK_DISTANCE; i <= CHUNK_DISTANCE; i++) {
-				Chunk* newChunk = terrainGenerator.GenerateChunk(currentChunk->gridPosX + i, currentChunk->gridPosZ + newChunkDirection.z * CHUNK_DISTANCE);
+				Chunk* newChunk = terrainGenerator.GenerateChunk(currentChunk->gridPosX + i, currentChunk->gridPosZ + newChunkDirection.z * CHUNK_DISTANCE, timeSinceStart);
 				chunks.push_back(newChunk);
 				newChunks.push_back(newChunk);
 			}
@@ -141,7 +142,7 @@ void World::DeleteCube(Cube* cube)
 	}
 }
 
-World::World()
+World::World(float timeSinceStart)
 {
 	textureManager.LoadTextures();
 
@@ -158,7 +159,7 @@ World::World()
 	//generate chunks around 0,0
 	for (int x = -CHUNK_DISTANCE; x <= CHUNK_DISTANCE; x++) {
 		for (int z = -CHUNK_DISTANCE; z <= CHUNK_DISTANCE; z++) {
-			Chunk* newChunk = terrainGenerator.GenerateChunk(x, z);
+			Chunk* newChunk = terrainGenerator.GenerateChunk(x, z, timeSinceStart);
 			newChunk->SetTransparency();
 			chunks.push_back(newChunk);
 			if (newChunk->gridPosX == 0 && newChunk->gridPosZ == 0) currentChunk = newChunk;

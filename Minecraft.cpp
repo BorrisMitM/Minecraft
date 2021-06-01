@@ -41,11 +41,9 @@ int main(void)
 
 
 	//Create World
-	World world;
-
+	World world(glfwGetTime());
 	//Setup camera controller
 	world.camera.Setup(&window);
-
 	glViewport(0, 0, window.m_nWidth, window.m_nHeight);	
 	while (window.IsRunning()) {
 		//delta time calculations
@@ -56,7 +54,7 @@ int main(void)
 
 		//Updating World
 		world.HandleInput(deltaTime);
-		world.Update(deltaTime);
+		world.Update(deltaTime, timeSinceStart);
 		world.RenderWorld();
 
 

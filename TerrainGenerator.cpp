@@ -13,7 +13,7 @@ TerrainGenerator::TerrainGenerator()
 	//worms.push_back(new PerlinWorm(Vector3(), 1000, 5));
 }
 
-Chunk* TerrainGenerator::GenerateChunk(int gridPosX, int gridPosZ)
+Chunk* TerrainGenerator::GenerateChunk(int gridPosX, int gridPosZ, float timeSinceStart)
 {
 	Chunk* newChunk = new Chunk();
 	newChunk->gridPosX = gridPosX;
@@ -59,7 +59,7 @@ Chunk* TerrainGenerator::GenerateChunk(int gridPosX, int gridPosZ)
 			}
 		}
 	}
-	newChunk->CreateCloud();
+	newChunk->CreateCloud(timeSinceStart);
 
 	//generate caves
 	return newChunk;

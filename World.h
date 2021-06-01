@@ -34,9 +34,9 @@ public:
 	CameraController camera;
 
 	void HandleInput(float dt);
-	void Update(float dt); 
+	void Update(float dt, float timeSinceStart);
 	void RenderWorld();
 	void DeleteCube(Cube* cube);
-	World();
+	World(float timeSinceStart);
 	~World();
 };

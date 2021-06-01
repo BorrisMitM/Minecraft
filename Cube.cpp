@@ -140,7 +140,7 @@ void Cube::Delete()
 }
 
 
-void Cube::AddToBufferArrays(std::vector<Cube::Vertex>& vertices, std::vector<unsigned int>& indecies)
+void Cube::AddToBufferArrays(std::vector<Cube::Vertex>& vertices, std::vector<unsigned int>& indecies, float offset)
 {
 	//index order
 	unsigned int offsetIndices[6] = { 0, 1, 2, 1, 3, 2 };
@@ -150,7 +150,7 @@ void Cube::AddToBufferArrays(std::vector<Cube::Vertex>& vertices, std::vector<un
 		if (visible[side]) {
 			for (int i = side * 4; i < side * 4 + 4; i++) {
 				Cube::Vertex vertex = Cube::Vertex{
-					vertexTemplate[i].x + position.x,
+					vertexTemplate[i].x + position.x + offset,
 					vertexTemplate[i].y + position.y,
 					vertexTemplate[i].z + position.z,
 
