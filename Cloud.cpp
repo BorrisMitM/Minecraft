@@ -30,7 +30,6 @@ void Cloud::GenerateClouds(float timeSinceStart)
 	noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
 	float movedDistance = timeSinceStart * windSpeed;
 	float flooredMovedDistance = floor(movedDistance);
-	float fract = movedDistance - flooredMovedDistance;
 	for (int x = 0; x < 16; x++)
 	{
 		for (int z = 0; z < 16; z++) //chunk distance * 16
@@ -41,7 +40,7 @@ void Cloud::GenerateClouds(float timeSinceStart)
 
 			if (noiseValue >= cloudThreshhold)
 			{
-				Cube* cloudCube = new Cube(x + gridPosX * 16 + movedDistance, cloudHeight, z + gridPosZ * 16);
+				Cube* cloudCube = new Cube(x + gridPosX * 16, cloudHeight, z + gridPosZ * 16);
 				cloudCubes[x][z] = cloudCube;
 			}
 			else cloudCubes[x][z] = NULL;
@@ -90,7 +89,7 @@ void Cloud::Update(float deltaTime, float timeSinceStart)
 
 			if (noiseValue >= cloudThreshhold)
 			{
-				Cube* cloudCube = new Cube(gridPosX * 16 + fract, cloudHeight, z + gridPosZ * 16);
+				Cube* cloudCube = new Cube(gridPosX * 16, cloudHeight, z + gridPosZ * 16);
 				cloudCubes[0][z] = cloudCube;
 			}
 			else cloudCubes[0][z] = NULL;
