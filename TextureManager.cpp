@@ -2,8 +2,6 @@
 
 void TextureManager::LoadTextures()
 {
-
-
 	//cloud
 	CBitmap* pCloudBitmap = new CBitmap();
 	pCloudBitmap->LoadFromFile("Cloud.png");
@@ -20,6 +18,8 @@ void TextureManager::LoadTextures()
 
 	delete(pCloudBitmap);
 	CBitmap* pSkyboxBitmap = new CBitmap();
+
+
 	//Skybox
 	pSkyboxBitmap->LoadFromFile("skyboxNew.png");
 
@@ -36,22 +36,7 @@ void TextureManager::LoadTextures()
 	delete(pSkyboxBitmap);
 
 
-	//// water
-	//CBitmap* pWaterBitmap = new CBitmap();
-	//pWaterBitmap->LoadFromFile("blending_transparent_window.png");
-
-	//glGenTextures(1, &waterTexture);
-	//glBindTexture(GL_TEXTURE_2D, waterTexture);
-
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pWaterBitmap->m_nWidth, pWaterBitmap->m_nHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, pWaterBitmap->m_pBytes);
-
-	//delete(pWaterBitmap);
-	// water
+	// Cube textures
 	CBitmap* pChunkBitmap = new CBitmap();
 	pChunkBitmap->LoadFromFile("MinecraftAtlas.png");
 

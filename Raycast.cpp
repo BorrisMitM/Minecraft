@@ -1,5 +1,7 @@
 #include "Raycast.h"
-//https://rosettacode.org/wiki/Find_the_intersection_of_a_line_with_a_plane#C.2B.2B but modified
+
+
+// Based on https://rosettacode.org/wiki/Find_the_intersection_of_a_line_with_a_plane#C.2B.2B but modified
 bool Raycast::IntersectPoint(Vector3 rayVector, Vector3 rayPoint, Vector3 planeNormal, Vector3 planePoint, Vector3& intersectionPoint) {
 	double prod2 = rayVector.dot(planeNormal);
 	if (prod2 >= 0 ) return false;
@@ -9,6 +11,8 @@ bool Raycast::IntersectPoint(Vector3 rayVector, Vector3 rayPoint, Vector3 planeN
 	intersectionPoint = rayPoint - rayVector * prod3;
 	return true;
 }
+
+// Cast a linear ray from startPos on direction "dir" that covers a given distance.
 Cube* Raycast::Cast(Vector3 startPos, Vector3 dir, int distance, World& world)
 {
 	Vector3 offset = Vector3(.5f, .5f, .5f);
@@ -104,7 +108,11 @@ Cube* Raycast::Cast(Vector3 startPos, Vector3 dir, int distance, World& world)
 	return hitCubes[closestIndex];
 }
 
-//radius < 1, upExtends < 1, downExtends < 2
+// Verifies a cylinder cast around "startPos".
+// The cylinder has height (upExtends + downExtends) and a given radius
+// upExtend is the distance between startPos and the top of the cylinder.
+// downExtend is the distance between startPos and the bottom of the cylinder.
+// Values are restricted to: radius < 1, upExtends < 1, downExtends < 2
 bool Raycast::CylinderCast(Vector3 startPos, float upExtend, float downExtend, float radius, World& world, vector<CollisionInfo>& collisionInfo)
 {
 	float radiusSqrd = radius * radius;
@@ -273,13 +281,13 @@ bool Raycast::CylinderCast(Vector3 startPos, float upExtend, float downExtend, f
 			}
 		}
 	}
-	/*for (int i = 0; i < collisionInfo.size(); i++)
-	{
-		cout << sqrt((startPos - collisionInfo[i].point).sqrdMagnitude()) << endl;
-	}*/
+
 	return collisionInfo.size() > 0;
 }
 
+// Returns a cube given (x, y, z) coordinates of a chunk.
+// If it would exceed the boundaries of a chunk,
+// this method takes care of looking for the correct cube in the neighbouring chunks.
 Cube* Raycast::GetRelativeCube(int x, int y, int z, Chunk* chunk)
 {
 	Chunk* chunkToGetTheCubeFrom;

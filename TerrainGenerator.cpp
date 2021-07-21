@@ -2,6 +2,7 @@
 
 TerrainGenerator::TerrainGenerator()
 {
+	// set up noise maps
 	noise.SetSeed(0);
 	noise.SetFractalOctaves(2);
 	noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
@@ -18,7 +19,6 @@ Chunk* TerrainGenerator::GenerateChunk(int gridPosX, int gridPosZ, float timeSin
 	Chunk* newChunk = new Chunk();
 	newChunk->gridPosX = gridPosX;
 	newChunk->gridPosZ = gridPosZ;
-	//create noise object
 
 	for (int x = 0; x < 16; x++)
 	{
@@ -65,14 +65,17 @@ Chunk* TerrainGenerator::GenerateChunk(int gridPosX, int gridPosZ, float timeSin
 	return newChunk;
 }
 
+
 void TerrainGenerator::CheckForWorm(int gridX, int gridZ)
 {
 	float value = wormNoise.GetNoise((float)gridX, (float)gridZ);
 	if (value * value > 0.95f) {
+		// chunk has worms, so we generate them
 		int wormAmount = (wormNoise.GetNoise((float)gridX * gridZ, 0.0f) * 0.5f + 0.5f) * 4 + 3;
 		worms.push_back(new PerlinWorm(Vector3(gridX * 16, 0, gridZ * 16), 1000, wormAmount));
 	}
 }
+
 
 void TerrainGenerator::UpdateWorms(int gridX, int gridZ, Vector3i dir)
 {
@@ -104,6 +107,7 @@ void TerrainGenerator::UpdateWorms(int gridX, int gridZ, Vector3i dir)
 		}
 	}
 }
+
 
 bool TerrainGenerator::IsCaveAt(Vector3 position)
 {

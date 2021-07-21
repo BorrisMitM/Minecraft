@@ -4,7 +4,7 @@
 
 using namespace std;
 
-// ---------------------------------------------------------------------------------------------
+// Three dimensional vector of floats
 
 class Vector3
 {
@@ -24,8 +24,8 @@ public:
 
 	Vector3 cross(const Vector3& v2);
 	float dot(const Vector3& v2);
-	float sqrdMagnitude();//length of the vector to the power of 2
-	void Normalize();
+	float sqrdMagnitude(); // length of the vector to the power of 2
+	void Normalize(); // normalizes the calling vector
 	void Print();
 };
 

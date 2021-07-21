@@ -15,28 +15,33 @@
 //#define ZSIZE 20
 //#define HEIGHT 7
 
+
+// Main class where our application lives.
+// Holds the game's main Update method, as well as the calls to input handling and rendering.
+// Instantiates and contains all necessary objects for the game.
+
 class World
 {
 private:
-	TextureManager textureManager; 
-	vector<Chunk*> chunks;
-	Skybox* skybox;
+	TextureManager textureManager; // Instance used to manage the textures of the game.
+	vector<Chunk*> chunks;	// Collection of all visible chunks.
+	Skybox* skybox;	// Reference to the game's skybox.
 
-	TerrainGenerator terrainGenerator;
+	TerrainGenerator terrainGenerator;	// Instance of the game's terrain generator.
 
-	void CalculateNeighbors();
+	void CalculateNeighbors(); // Calculates and sets the neighbours for every chunk.
 
-	void BindBuffer(unsigned int vbo, unsigned int ibo, unsigned int texture);
+	void BindBuffer(unsigned int vbo, unsigned int ibo, unsigned int texture); // Binds a buffer to be rendered.
 
-	Vector3 playerPosition;
+	Vector3 playerPosition;	// Position of the player in world coordinates.
 public: 
-	Chunk* currentChunk;
-	CameraController camera;
+	Chunk* currentChunk;	// Reference to the Chunk the player is currently in.
+	CameraController camera; // Reference to the games camera.
 
-	void HandleInput(float dt);
-	void Update(float dt, float timeSinceStart);
-	void RenderWorld();
-	void DeleteCube(Cube* cube);
+	void HandleInput(float dt);	// Checks incoming inputs
+	void Update(float dt, float timeSinceStart); // Propagates the passage of time to all game objects.
+	void RenderWorld();	// Renders all world objects.
+	void DeleteCube(Cube* cube); // Deletes a given cube from the world.
 	World(float timeSinceStart);
 	~World();
 };

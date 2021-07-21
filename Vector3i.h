@@ -4,7 +4,7 @@
 
 using namespace std;
 
-// ---------------------------------------------------------------------------------------------
+// Three dimensional vector of integers
 
 class Vector3i
 {

@@ -14,6 +14,7 @@ void Skybox::Render(TextureManager& textureManager)
 {
 	glPushMatrix();
 	glTranslatef(position.x, position.y, position.z);
+	// Skybox should be rendered without depth test
 	glDisable(GL_DEPTH_TEST); 
 
 	textureManager.BindTexture(textureManager.skyboxTexture);

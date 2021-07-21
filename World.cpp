@@ -85,58 +85,75 @@ void World::Update(float dt, float timeSinceStart)
 
 void World::RenderWorld()
 {
-
+	// Clear buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	// Reset glMatrix
 	glLoadIdentity();
 
+	// Sets glMatrix according to game's camera object
 	gluLookAt(
 		camera.getPosition().x, camera.getPosition().y, camera.getPosition().z,
 		camera.getLookAt().x, camera.getLookAt().y, camera.getLookAt().z,
 		camera.getUp().x, camera.getUp().y, camera.getUp().z
 	);
 
+	// First: render skybox
 	skybox->Render(textureManager);
 
+	// Binds and renders all terrain cubes
 	textureManager.BindTexture(textureManager.chunkAtlas);
 	for (int i = 0; i < chunks.size(); i++) {
 		chunks[i]->Render();
 	}
+
+	// Binds and renders cloud cubes
 	textureManager.BindTexture(textureManager.cloudTexture);
 	for (int i = 0; i < chunks.size(); i++) {
 		chunks[i]->cloud->Render();
 	}
 }
 
+
 void World::DeleteCube(Cube* cube)
 {
 	if (cube == nullptr) return;
+
+	// Find cube's position in world grid
 	int chunkGridX = floor(cube->position.x * (1.0f / 16.0f));
 	int chunkGridZ = floor(cube->position.z * (1.0f / 16.0f));
+
+	// Find the cube's index in chunk space, handling the possibility of negative grid values
 	Vector3i cubeIndex(0,cube->position.y,0);
 	if (cube->position.x < 0) {
 		cubeIndex.x = 16 + (int)round(cube->position.x) % 16;
 	}
-	else cubeIndex.x = (int)cube->position.x % 16;
+	else {
+		cubeIndex.x = (int)cube->position.x % 16;
+	}
 	if (cube->position.z < 0) {
 		cubeIndex.z = 16 + (int)round(cube->position.z) % 16;
 	}
-	else cubeIndex.z = (int)cube->position.z % 16;
+	else {
+		cubeIndex.z = (int)cube->position.z % 16;
+	}
+
+	// Finds and deletes cube from chunk
 	for (int i = 0; i < chunks.size(); i++) {
 		if (chunkGridX == chunks[i]->gridPosX && chunkGridZ == chunks[i]->gridPosZ) {
 			delete(cube);
 			chunks[i]->cubes[cubeIndex.x][cubeIndex.y][cubeIndex.z] = NULL;
+
+			// Update the visibility of neighbouring cubes
 			chunks[i]->SetVisibility(cubeIndex.x + 1, cubeIndex.y, cubeIndex.z);
 			chunks[i]->SetVisibility(cubeIndex.x - 1, cubeIndex.y, cubeIndex.z);
 			chunks[i]->SetVisibility(cubeIndex.x, cubeIndex.y + 1, cubeIndex.z);
 			chunks[i]->SetVisibility(cubeIndex.x, cubeIndex.y - 1, cubeIndex.z);
 			chunks[i]->SetVisibility(cubeIndex.x, cubeIndex.y, cubeIndex.z + 1);
 			chunks[i]->SetVisibility(cubeIndex.x, cubeIndex.y, cubeIndex.z - 1);
+
+			// Regenerate the buffers
 			chunks[i]->CreateAndFillBuffer();
-			//for (int j = 0; j < 4; j++) {
-			//	if()
-			//	chunks[i]->neighbors[j]->CreateAndFillBuffer();
-			//}
 			break;
 		}
 	}
@@ -148,15 +165,14 @@ World::World(float timeSinceStart)
 
 	skybox = new Skybox(10.0f);
 
-	//Generate relevant perlin worms
-
+	// Generate relevant perlin worms
 	for (int x = -CHUNK_DISTANCE - 1 - WORM_DISTANCE; x <= CHUNK_DISTANCE + 1 + WORM_DISTANCE; x++) {
 		for (int z = -CHUNK_DISTANCE - 1 - WORM_DISTANCE; z <= CHUNK_DISTANCE + 1 + WORM_DISTANCE; z++) {
 			terrainGenerator.CheckForWorm(x, z);
 		}
 	}
 
-	//generate chunks around 0,0
+	// Generate chunks around (0,0)
 	for (int x = -CHUNK_DISTANCE; x <= CHUNK_DISTANCE; x++) {
 		for (int z = -CHUNK_DISTANCE; z <= CHUNK_DISTANCE; z++) {
 			Chunk* newChunk = terrainGenerator.GenerateChunk(x, z, timeSinceStart);
@@ -165,9 +181,9 @@ World::World(float timeSinceStart)
 			if (newChunk->gridPosX == 0 && newChunk->gridPosZ == 0) currentChunk = newChunk;
 		}
 	}
-
 	CalculateNeighbors();
 
+	// Generate index and vertex buffers of all chunks
 	for (int i = 0; i < chunks.size(); i++) {
 		chunks[i]->CreateAndFillBuffer();
 	}
@@ -190,7 +206,7 @@ void World::CalculateNeighbors()
 {
 	for (int i = 0; i < chunks.size(); i++)
 	{
-		//find neighbors for each chunk
+		// Find neighbors for each chunk
 		int gridPosX = chunks[i]->gridPosX;
 		int gridPosZ = chunks[i]->gridPosZ;
 		chunks[i]->neighbors[0] = NULL;
